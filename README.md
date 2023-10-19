@@ -22,6 +22,13 @@ To awaken Benedikte's musical journey:
 2. Watch Benedikte interpret them with FFT.
 3. She'll move gracefully according to hidden commands.
 
+## Authors
+
+Mads (mail?)
+Laurits
+Valdemar
+Daknu
+
 ## Contribute
 
 Join our chorus and contribute ideas or code to shape Benedikte's melodic adventure.
