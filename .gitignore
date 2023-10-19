@@ -1,8 +1,10 @@
 # Ignore compiled output files
+main
 *.exe
 *.out
 *.o
 *.a
 *.so
+*.d
 /build/   # Ignore the 'build' directory
 /bin/     # Ignore the 'bin' directory
