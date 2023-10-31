@@ -8,10 +8,19 @@
 #define SAMPLE_RATE 44100
 #define FRAMES_PER_BUFFER 1024
 #define NUM_CHANNELS 1
-#define RECORDING_DURATION_SECONDS 1
+#define RECORDING_DURATION_SECONDS 1    //0.1 virkede ok
 #define OUTPUT_FILE "output.csv"
 
-void FFT(const std::vector<float> &audioData)
+
+std::vector<double> DTMF1 = {697.5, 770, 852, 941};
+std::vector<double> DTMF2 = {1209.5, 1336, 1477, 1633};
+
+// Vigtig note! i vores "int index" senere bliver det lavet til en integer or dermed afrundet. 
+// Med det antal samples N vi har og vores sample rate bliver
+// 697.5 til index = 696. Det giver den største amplitude ligesom da vi i matlab så at den af en eller anden grund
+// altid var størst ved 696 og ikke 697 som man skulle tro
+
+void FFT(const std::vector<double> &audioData, double sampleRate)
 {
     int N = audioData.size();
     std::cout << "N = " << N << std::endl;
@@ -40,22 +49,61 @@ void FFT(const std::vector<float> &audioData)
     //FFTW_ESTIMATE betyder at den estimere den hurtigste plan i stedet for at prøve lidt forskelligt af (eller noget)
     fftw_execute(p); //udfører planen
 
-    // Printer alle amplituder
-    double largest = 0.0;
-    int largestN = 0;
+    double avg;
 
-    for (int i = 690; i < 1700; i++) //N/2
-    {
-        double amplitude = std::sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
-        //std::cout << "N: " << i << " , Amplitude: " << amplitude << std::endl;
-        if(amplitude > 5000){
-            std::cout << i << " . " << amplitude << std::endl;
-            
-            //largest = amplitude;
-            //largestN = i;
+    for(int i = 0; i < N/2+1; i++){
+        avg = avg + std::sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
+    }
+    
+    //std::cout << out.size() << std::endl;
+    //std::cout << "penis" << avg/(N/2 + 1)  << std::endl;
+
+    // Find største amp på ene led
+    double largestAmp1 = avg/(N/2 + 1)*10;
+    double largestFreq1 = 0;
+
+    for (double i : DTMF1)
+    {        
+        int index = i * (N / sampleRate);
+
+        double amp = std::sqrt(out[index][0] * out[index][0] + out[index][1] * out[index][1]);
+        
+        // Pt. printer den amp for hver frekvens i DTMF spektret for debugging
+        //std::cout << i << "---------" << amp << std::endl;
+        if (amp > largestAmp1){
+            largestAmp1 = amp;
+            largestFreq1 = i;
         }
     }
-    std::cout << "største amplitude = " << largest << " ved N = " << largestN << std::endl;
+    
+    // Find største amp på anden led
+    double largestAmp2 = avg/(N/2 + 1)*10;
+    double largestFreq2 = 0;
+
+    if(largestFreq1 != 0){
+    for (double i : DTMF2)
+    {
+        int index = i * (N / sampleRate);
+
+        double amp = std::sqrt(out[index][0] * out[index][0] + out[index][1] * out[index][1]);
+        
+        //std::cout << i << "---------" << amp << std::endl;
+        if (amp > largestAmp2){
+            largestAmp2 = amp;
+            largestFreq2 = i;
+        }
+    }
+        if(largestFreq2 != 0){
+        std::cout << "Largest DTMF1: " << largestFreq1 << std::endl;
+        std::cout << "Largest DTMF2: " << largestFreq2 << std::endl;
+        }
+        else {
+            std::cout << "no valid DTMF found" << std::endl;
+        }
+    } else {
+        std::cout << "no valid DTMF found" << std::endl;
+    }
+
 
     // De-allokerer hukommelse fra pointers. 
     fftw_destroy_plan(p);
@@ -117,7 +165,7 @@ int main() {
     std::cout << "Recording..." << std::endl;
 
     // Create a vector to store the recorded audio data
-    std::vector<float> audioData;
+    std::vector<double> audioData;
     audioData.reserve(SAMPLE_RATE * NUM_CHANNELS * RECORDING_DURATION_SECONDS);
 
     // Record for the specified duration
@@ -164,7 +212,7 @@ int main() {
         }
     }
 
-    FFT(audioData);
+    FFT(audioData, SAMPLE_RATE);
 
     outputFile.close();
 
