@@ -58,9 +58,17 @@ void FFT(const std::vector<double> &audioData, double sampleRate)
     //FFTW_ESTIMATE betyder at den estimere den hurtigste plan i stedet for at prøve lidt forskelligt af (eller noget)
     fftw_execute(p); //udfører planen
 
+    double avg;
+
+    for(int i = 0; i < N/2+1; i++){
+        avg = avg + std::sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
+    }
+    
+    //std::cout << out.size() << std::endl;
+    //std::cout << "penis" << avg/(N/2 + 1)  << std::endl;
 
     // Find største amp på ene led
-    double largestAmp1 = 500;
+    double largestAmp1 = avg/(N/2 + 1)*10;
     double largestFreq1 = 0;
 
     for (double i : DTMF1)
@@ -70,7 +78,7 @@ void FFT(const std::vector<double> &audioData, double sampleRate)
         double amp = std::sqrt(out[index][0] * out[index][0] + out[index][1] * out[index][1]);
         
         // Pt. printer den amp for hver frekvens i DTMF spektret for debugging
-        std::cout << i << "---------" << amp << std::endl;
+        //std::cout << i << "---------" << amp << std::endl;
         if (amp > largestAmp1){
             largestAmp1 = amp;
             largestFreq1 = i;
@@ -78,7 +86,7 @@ void FFT(const std::vector<double> &audioData, double sampleRate)
     }
     
     // Find største amp på anden led
-    double largestAmp2 = 500;
+    double largestAmp2 = avg/(N/2 + 1)*10;
     double largestFreq2 = 0;
 
     if(largestFreq1 != 0){
@@ -88,7 +96,7 @@ void FFT(const std::vector<double> &audioData, double sampleRate)
 
         double amp = std::sqrt(out[index][0] * out[index][0] + out[index][1] * out[index][1]);
         
-        std::cout << i << "---------" << amp << std::endl;
+        //std::cout << i << "---------" << amp << std::endl;
         if (amp > largestAmp2){
             largestAmp2 = amp;
             largestFreq2 = i;
