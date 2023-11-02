@@ -60,9 +60,9 @@ private:
 // altid var størst ved 696 og ikke 697 som man skulle tro
 
 int lastSound;
+bool shutdown=false;
 
-
-void FFT(const std::vector<double> &audioData, double sampleRate, int argc, char **argv)
+void FFT(const std::vector<double> &audioData, double sampleRate)
 {
     int N = audioData.size();
     //std::cout << "N = " << N << std::endl;
@@ -131,7 +131,6 @@ void FFT(const std::vector<double> &audioData, double sampleRate, int argc, char
         if(largestFreq2 != 0){
         //std::cout << "Largest DTMF1: " << largestFreq1 << " Largest DTMF2: " << largestFreq2 << std::endl;
         
-
         int sound = largestFreq1+largestFreq2;
         if(lastSound == sound){
             // De-allokerer hukommelse fra pointers. 
@@ -140,34 +139,30 @@ void FFT(const std::vector<double> &audioData, double sampleRate, int argc, char
         fftw_free(out);
         return;
         }
-
                 // Initialize rclcpp
-        rclcpp::init(argc, argv);
-
-        auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
-
-        rclcpp::executors::SingleThreadedExecutor executor;
-        executor.add_node(rb3_publisher);
-        
         switch (sound)
         {
         case 1907:
             std::cout << "1" << std::endl;
-            rb3_publisher->publish_vel(0.1, y);
+	  rb3_publisher->publish_vel(0.1,0);
+
             break;
         case 2033:
             std::cout << "2" << std::endl;
-            rb3_publisher->publish_vel(0, y);
+            rb3_publisher->publish_vel(0, 0);
+
             break;
         case 2174:
             std::cout << "3" << std::endl;
+	rb3_publisher->publish_vel(0,0.2);
             break;
         case 2330:
             std::cout << "A" << std::endl;
+	 rb3_publisher->publish_vel(0.1, 0);
             break;
         case 1979:
             std::cout << "4" << std::endl;
-            break;        
+            break;
         case 2106:
             std::cout << "5" << std::endl;
             break;
@@ -200,37 +195,40 @@ void FFT(const std::vector<double> &audioData, double sampleRate, int argc, char
             break;
         case 2574:
             std::cout << "D" << std::endl;
+        rb3_publisher->publish_vel(0,0);
+	shutdown = true;
+ rclcpp::shutdown();
             break;
         default:
             std::cout << "Ewww" << std::endl;
             break;
         }
         lastSound = sound;
-
+        
         // De-allokerer hukommelse fra pointers. 
         fftw_destroy_plan(p);
         fftw_free(in);
         fftw_free(out);
-
-        rclcpp::shutdown();
         return;
         }
     } 
     
     //std::cout << "no valid DTMF found" << std::endl;
-    
-
-
     // De-allokerer hukommelse fra pointers. 
     fftw_destroy_plan(p);
     fftw_free(in);
     fftw_free(out);
 }
 
-int main(int argc, char const **argv[])
+int main(int argc, char **argv)
 {
     PaStream *stream;
     PaError err;
+
+    rclcpp::init(argc,argv);
+	auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(rb3_publisher); 
 
     // Initialize PortAudio
     err = Pa_Initialize();
@@ -248,7 +246,7 @@ int main(int argc, char const **argv[])
 
     int test = 0;
 
-    while (true) {
+    while (!shutdown) {
         
         std::vector<double> audioData;
         audioData.reserve(SAMPLE_RATE * NUM_CHANNELS * RECORDING_DURATION_SECONDS);
@@ -260,13 +258,12 @@ int main(int argc, char const **argv[])
             audioData.insert(audioData.end(), buffer, buffer + FRAMES_PER_BUFFER);
         }
 
-        FFT(audioData, SAMPLE_RATE, argc, argv);
+        FFT(audioData, SAMPLE_RATE);
        // std::cout << test;
         //test++;
     }
 
     err = Pa_StopStream(stream);
-    
 
     err = Pa_CloseStream(stream);
     
