@@ -8,7 +8,6 @@
 #include <chrono>
 #include "class2.hpp"
 //#include "robot.hpp"
-#include <map>
 
 
 #include "portaudio.h"
@@ -21,52 +20,6 @@
 using namespace std;
 
 bool shutdown = false;
-
-std::map<int, bool> toneToBitMap = {{1979, true}, {2106, true}, {2247, true}, 
-    {2061, false}, {2188, false}, {2329, false}};
-
-int lastSequenceNumber = 0;
-
-void execute(std::vector<int> & inputSekvens){
-    std::vector<bool> bits;
-    for (int i = 0; i < inputSekvens.size(); i++)
-    {
-        bits.push_back(toneToBitMap[inputSekvens[i]]);
-    }
-    std::cout << "test" << std::endl;
-    for (bool bit : bits){
-        std::cout << bit;
-    }
-    
-    std::cout << " Bits end" << std::endl;
-    // måske parity check her?
-
-    int sequenceNumber = 0;
-    for (int i = 0; i < 3; i++){
-        sequenceNumber|= static_cast<int>(bits[i]) << (3 - i - 1);
-    }
-    std::cout << "seqNr: " << sequenceNumber << std::endl;
-    //if (sequenceNumber != lastSequenceNumber + 1){
-    //    lastSequenceNumber = sequenceNumber; //eller hvad skal der ske ved fejl
-    //    //return fejl;
-    //}
-    lastSequenceNumber = sequenceNumber;
-
-    if(bits[3] && bits[4]){ // kommando = 11 "kør frem"
-        //robot.forward(bits[5], bits[6]);
-        std::cout << "kør" << bits[5] << bits[6] << std::endl;
-    } 
-    else if (!bits[3] && bits[4]) {// kommado = 01 "drej højre"
-        //robot.turnRight(bits[5], bits[6]);
-        std::cout << "drej" << bits[5] << bits[6] << std::endl;
-
-    }
-    else {
-        // noget error værk
-    }
-    shutdown = true;
-}
-
 
 int main(int argc, char **argv)
 {
@@ -97,8 +50,6 @@ int main(int argc, char **argv)
     const size_t ringBufferSize = SAMPLE_RATE * NUM_CHANNELS * RECORDING_DURATION_SECONDS;
     std::vector<double> ringBuffer(ringBufferSize, 0.0);
     size_t ringBufferIndex = 0;
-    std::vector<int> fundneToner;
-    bool startBit = false;
 
     while (!shutdown)
     {
@@ -106,7 +57,7 @@ int main(int argc, char **argv)
         float buffer[FRAMES_PER_BUFFER];
         err = Pa_ReadStream(stream, buffer, FRAMES_PER_BUFFER);
 
-        //auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
         
 
         // Copy into ring buffer
@@ -120,32 +71,10 @@ int main(int argc, char **argv)
         if (ringBufferIndex == 0)
         {
             result = decoder.FFT(ringBuffer, SAMPLE_RATE);
+            // ... switch case for DTMF tones ...
             
-            if(result != 0){ std::cout << result << std::endl; }
             
-            if (result == 2150 && !startBit){
-                startBit = true;
-                fundneToner.clear();
-                std::cout << "startbit found" << std::endl;
-
-                continue;
-            }
-
-            else if (result == 2418 && startBit) { // "# - stopbit"
-                //måske parity check
-                std::cout << "endbit found" << std::endl;
-                execute(fundneToner);
-                startBit = false;
-
-                continue;
-            } 
-
-            if (startBit && result != 0) {
-                fundneToner.push_back(result);
-            }
-
-
-/*            switch (result)
+            switch (result)
             {
             case 1907:
                 std::cout << "1" << std::endl;
@@ -204,11 +133,11 @@ int main(int argc, char **argv)
             default:
                 // std::cout << "Ewww" << std::endl;
                 break;
-            }*/
+            }
         }
-        //auto end = std::chrono::high_resolution_clock::now();
-        //std::chrono::duration<double, std::milli> duration = end - start;
-        //std::cout << "Processing cycle took " << duration.count() << " milliseconds.\n";
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> duration = end - start;
+        std::cout << "Processing cycle took " << duration.count() << " milliseconds.\n";
     }
 
     err = Pa_StopStream(stream);
@@ -218,4 +147,3 @@ int main(int argc, char **argv)
     Pa_Terminate();
     return 0;
 }
-

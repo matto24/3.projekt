@@ -26,7 +26,7 @@ public:
 
     int FFT(const std::vector<double>& audioData, double sampleRate) {
         size_t N = audioData.size();
-        std::cout << N << std::endl;
+        //std::cout << N << std::endl;
 
         // Copy the audio data to the input buffer
         std::copy(audioData.begin(), audioData.end(), in.begin());
@@ -70,9 +70,9 @@ public:
                     return 0;
                 }
                 lastSound = detectedSound;
+                return detectedSound;
             }
         }
-
-        return detectedSound;
+        return 0;
     }
 };
