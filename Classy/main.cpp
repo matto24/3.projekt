@@ -8,6 +8,7 @@
 #include "class2.hpp"
 //#include "robot.hpp"
 #include <map>
+#include <bitset>
 
 
 #include "portaudio.h"
@@ -21,48 +22,50 @@ using namespace std;
 
 bool shutdown = false;
 
-std::map<int, bool> toneToBitMap = {{1979, true}, {2106, true}, {2247, true}, 
-    {2061, false}, {2188, false}, {2329, false}};
+std::map<int, std::string> toneToBitMap = {{2277, "000"}, {1907, "001"}, {2033, "010"}, {2174, "011"}, {1979, "100"}, {2106, "101"}, {2247, "110"}, 
+    {2061, "111"}, {2188, "0"}, {2329, "1"}};
 
 int lastSequenceNumber = 0;
 
 void execute(std::vector<int> & inputSekvens){
-    std::vector<bool> bits;
+    std::string bits;
     for (int i = 0; i < inputSekvens.size(); i++)
     {
-        bits.push_back(toneToBitMap[inputSekvens[i]]);
+        bits = bits+toneToBitMap[inputSekvens[i]];
+        //bits.push_back(toneToBitMap[inputSekvens[i]]);
     }
-    std::cout << "test" << std::endl;
-    for (bool bit : bits){
-        std::cout << bit;
-    }
+    std::cout << bits << std::endl;
+    
     
     std::cout << " Bits end" << std::endl;
     // måske parity check her?
 
-    int sequenceNumber = 0;
-    for (int i = 0; i < 3; i++){
-        sequenceNumber|= static_cast<int>(bits[i]) << (3 - i - 1);
-    }
+    int sequenceNumber = stoi(bits.substr(0,6), nullptr,2);
+
+
     std::cout << "seqNr: " << sequenceNumber << std::endl;
-    //if (sequenceNumber != lastSequenceNumber + 1){
-    //    lastSequenceNumber = sequenceNumber; //eller hvad skal der ske ved fejl
-    //    //return fejl;
-    //}
+    std::cout << "seqNr: " << sequenceNumber + 0b1 << std::endl;
+
+
+    if (sequenceNumber != lastSequenceNumber + 1){
+        lastSequenceNumber = 0; //eller hvad skal der ske ved fejl
+        std::cout << "fejl" << std::endl;
+        shutdown = true;
+        return;
+    }
     lastSequenceNumber = sequenceNumber;
 
-    if(bits[3] && bits[4]){ // kommando = 11 "kør frem"
-        //robot.forward(bits[5], bits[6]);
-        std::cout << "kør" << bits[5] << bits[6] << std::endl;
-    } 
-    else if (!bits[3] && bits[4]) {// kommado = 01 "drej højre"
-        //robot.turnRight(bits[5], bits[6]);
-        std::cout << "drej" << bits[5] << bits[6] << std::endl;
+    switch (stol(bits.substr(6,12), nullptr,2))
+    {
+    case 0b111111:
+        std::cout << "penis" << std::endl;
+        break;
+    
+    default:
+        break;
+    }
 
-    }
-    else {
-        // noget error værk
-    }
+
     shutdown = true;
 }
 
