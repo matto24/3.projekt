@@ -14,8 +14,6 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(FFTW3 REQUIRED)
-find_package(PortAudio REQUIRED)
 
 # Uncomment the following section in order to fill in
 # further dependencies manually.
@@ -25,11 +23,12 @@ add_executable(rb3_node_cpp src/rb3_node_cpp.cpp)
 ament_target_dependencies(rb3_node_cpp rclcpp geometry_msgs)
 
 # Link the FFTW3 and PortAudio libraries to your executable
-target_link_libraries(rb3_node_cpp ${FFTW3_LIBRARIES} ${PORTAUDIO_LIBRARIES})
+target_link_libraries(rb3_node_cpp portaudio)
+target_link_libraries(rb3_node_cpp fftw3)
 
 install(TARGETS
   rb3_node_cpp
   DESTINATION lib/${PROJECT_NAME})
-  
+
 ament_package()
 
