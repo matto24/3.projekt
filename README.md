@@ -1,5 +1,11 @@
 # 3.projekt
 
+## TO-DO
+1. Lav et nyt tærskel system for FFT støjfilter
+2. Skriv protokol til klasse måske?
+3. !Lav lyd afspil der matcher protokol
+4. Få benedikte til at snakke igen
+
 # Benedikte: The Melodic Explorer
 
 Benedikte is a Raspberry Pi-powered robot that listens for audio signals, calculates FFT, and moves in response to DTMF commands hidden in the melodies.
