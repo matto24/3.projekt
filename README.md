@@ -3,8 +3,9 @@
 ## TO-DO
 1. Lav et nyt tærskel system for FFT støjfilter
 2. Skriv protokol til klasse måske?
-3. !Lav lyd afspil der matcher protokol
-4. Få benedikte til at snakke igen
+3. !Lav lyd afspil der matcher protokol fx "kør 10" -> "1010100....0011" og afspiller det lækkert husk sequenceNr og parity bit
+4. Få benedikte til at snakke igen ved errors
+5. Program der laver vores use-case til kommandoer fx "kør 10, drej 45, kør 20"
 
 # Benedikte: The Melodic Explorer
 
