@@ -23,11 +23,13 @@ int main(int argc, char **argv)
     executor.add_node(rb3_publisher);
 
     Drive robo(rb3_publisher);
-    robo.forwards("11");
-    robo.backwards("11");
+    robo.forwards("100");
+    robo.backwards("100");
     //90 grader venstre
     robo.turnleft("01011010");
     robo.turnRight("01011010");
+
+   rclcpp::shutdown();
 
     return 0;
 }
