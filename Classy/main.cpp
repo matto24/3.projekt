@@ -1,11 +1,12 @@
 #include <iostream>
 #include <vector>
-//#include <chrono>
 #include <map>
 
 #include "FFT.h"
-// #include "robot.hpp"
 #include "PortAudioClass.h"
+#include "rb3_cpp_publisher.h"
+#include "drive.h"
+#include <unistd.h>
 
 const int sampleRate = 8000;
 const double recordingDurationSeconds = 0.2; // resolution = (sample_rate /(sample_rate*duration))
@@ -18,7 +19,7 @@ std::map<int, std::string> toneToBitMap = {{2277, "000"}, {1907, "001"}, {2033, 
 
 int lastSequenceNumber = 0;
 
-void interpretMessage(std::vector<int> &inputSekvens)
+void interpretMessage(std::vector<int> &inputSekvens, Drive *robo)
 {
         //Create string of bits
 
@@ -67,11 +68,17 @@ void interpretMessage(std::vector<int> &inputSekvens)
 
     switch (commandInt) 
     {
-    case 0b111111: //Command-code
-        //robot.forward(data);
+    case 0b111110: //Command-code
+        robo->forwards(data);
         break;
     case 0b101010:
-        //robot.turnRight(data);
+        robo->turnRight(data);
+        break;
+    case 0b010111: //Command-code
+        robo.>backwards(data);
+        break;
+    case 0b101110:
+        robo->turnleft(data);
         break;
 
     default:
@@ -83,6 +90,14 @@ void interpretMessage(std::vector<int> &inputSekvens)
 
 int main(int argc, char **argv)
 {
+
+    rclcpp::init(argc, argv);
+    auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(rb3_publisher);
+
+    Drive robo(rb3_publisher);
+
     int result;
     DTMFDecoder decoder(1600);
 
@@ -131,7 +146,7 @@ int main(int argc, char **argv)
             else if (result == 2418 && startBit)
             { // "# - stopbit"
                 std::cout << "end" << std::endl;
-                interpretMessage(fundneToner);
+                interpretMessage(fundneToner, &robo);
                 startBit = false;
 
                 continue;
@@ -146,6 +161,7 @@ int main(int argc, char **argv)
         // std::chrono::duration<double, std::milli> duration = end - start;
         // std::cout << "Processing cycle took " << duration.count() << " milliseconds.\n";
     }
+    rclcpp::shutdown();
     return 0;
 }
 

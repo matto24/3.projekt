@@ -2,9 +2,6 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include <vector>
-#include <portaudio.h>
-#include <fftw3.h>
 #include <cmath>
 #include <map>
 #include <unistd.h>
