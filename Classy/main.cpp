@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <utility>
 
 #include "FFT.h"
 #include "PortAudioClass.h"
@@ -19,10 +20,11 @@ std::map<int, std::string> toneToBitMap = {{2277, "000"}, {1907, "001"}, {2033, 
 
 int lastSequenceNumber = 0;
 
+std::vector<std::pair<int, std::string>> driveCommands;
+
 void interpretMessage(std::vector<int> &inputSekvens, Drive *robo)
 {
-        //Create string of bits
-
+    //Create string of bits
     std::string bits;
     for (int i = 0; i < inputSekvens.size(); i++)
     {
@@ -30,8 +32,7 @@ void interpretMessage(std::vector<int> &inputSekvens, Drive *robo)
     }
     std::cout << bits << std::endl;
 
-        //Parity Check:
-
+    //Parity Check:
     int oneCount = 0;
     for (char c : bits)
     {
@@ -69,23 +70,21 @@ void interpretMessage(std::vector<int> &inputSekvens, Drive *robo)
     switch (commandInt) 
     {
     case 0b111110: //Command-code
-        robo->forwards(data);
+        driveCommands.push_back(std::make_pair(commandInt, data));
         break;
     case 0b101010:
-        robo->turnRight(data);
+        driveCommands.push_back(std::make_pair(commandInt, data));
         break;
     case 0b010111: //Command-code
-        robo.>backwards(data);
+        driveCommands.push_back(std::make_pair(commandInt, data));
         break;
     case 0b101110:
-        robo->turnleft(data);
+        driveCommands.push_back(std::make_pair(commandInt, data));
         break;
-
     default:
         break;
     }
 
-    shutdown = true;
 }
 
 int main(int argc, char **argv)
@@ -123,12 +122,10 @@ int main(int argc, char **argv)
             ringBuffer[ringBufferIndex] = buffer[i];
             ringBufferIndex = (ringBufferIndex + 1) % ringBufferSize;
         }
-
         // If the ring buffer is filled, process it
         if (ringBufferIndex == 0)
-        {
+        {   
             result = decoder.FFT(ringBuffer, sampleRate);
-
             if (result != 0)
             {
                 std::cout << result << std::endl;
@@ -142,7 +139,6 @@ int main(int argc, char **argv)
 
                 continue;
             }
-
             else if (result == 2418 && startBit)
             { // "# - stopbit"
                 std::cout << "end" << std::endl;
@@ -155,6 +151,10 @@ int main(int argc, char **argv)
             if (startBit && result != 0)
             {
                 fundneToner.push_back(result);
+            }
+            if(result == 2574) {
+                robo.commands(driveCommands);
+                shutdown = true;
             }
         }
         // auto end = std::chrono::high_resolution_clock::now();

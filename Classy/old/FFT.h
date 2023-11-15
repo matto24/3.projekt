@@ -34,7 +34,7 @@ public:
         // Execute the FFT plan
         fftw_execute(plan);
 
-        double threshold = 100.0; // Adjust threshold based on your needs
+        double threshold = 1.0; // Adjust threshold based on your needs
         double largestAmp1 = threshold;
         double largestAmp2 = threshold;
         double largestFreq1 = 0.0;

@@ -4,13 +4,13 @@
 #include <iostream>
 #include <vector>
 #include <portaudio.h>
-//#include <fftw3.h>
+#include <fftw3.h>
 #include <cmath>
-#include "class2.hpp"
+#include "FFT.h"
 
 //#include "rclcpp/rclcpp.hpp"
 //#include "geometry_msgs/msg/twist.hpp"
-#include "portaudio.h"
+//#include "portaudio.h"
 
 #define SAMPLE_RATE 8000
 #define RECORDING_DURATION_SECONDS 0.2 // resolution = (sample_rate /(sample_rate*duration))
@@ -79,8 +79,8 @@ int main(int argc, char **argv)
     err = Pa_OpenStream(&stream, &inputParameters, nullptr, SAMPLE_RATE, FRAMES_PER_BUFFER, paClipOff, nullptr, nullptr);
 
     err = Pa_StartStream(stream);
-
-
+	
+    std::cout << Pa_GetDeviceInfo(0) << std::endl;
 
     while (!shutdown)
     {
@@ -97,7 +97,6 @@ int main(int argc, char **argv)
         }
 
         result = decoder.FFT(audioData, SAMPLE_RATE);
-
         switch (result)
         {
         case 1907:

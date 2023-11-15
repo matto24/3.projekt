@@ -96,7 +96,7 @@ std::string toneList(std::string binaryNum)
     // Check length of binary number. If binaryNum%3 != 0, then append 0s at beginning to make it.
     while (binaryNum.size() % 3 != 0)
     {
-        binaryNum.insert(0, "0");
+        binaryNum.insert(12, "0");
     }
     //Iterator
     std::map<std::string, std::string>::iterator itr;

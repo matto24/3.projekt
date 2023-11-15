@@ -28,7 +28,7 @@ int DTMFDecoder::FFT(const std::vector<double>& audioData, double sampleRate)
         // Execute the FFT plan
         fftw_execute(plan);
 
-        double threshold = 100.0; // LAV NOGET FEDT TIL THRESHOLD
+        double threshold = 1; // LAV NOGET FEDT TIL THRESHOLD
         double largestAmp1 = threshold;
         double largestAmp2 = threshold;
         double largestFreq1 = 0.0;
