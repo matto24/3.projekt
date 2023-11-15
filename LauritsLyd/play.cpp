@@ -127,16 +127,42 @@ int main() {
     pthread_create(&audioThreadId, NULL, audioThread, (void*)stream);    
 
 
-    std::string conversion = toneList("010101000");
+    std::string conversion = toneList("0101010101010101010101010101");
 
-    char keys[conversion.length()+1]; // List of keys to play
-    strcpy(keys, conversion.c_str());
+    //char keys[conversion.length()+1]; // List of keys to play
+    //strcpy(keys, conversion.c_str());
 
-    for (int i = 0; i < sizeof(keys) - 1; i++) {
-        selectedKey = keys[i];
+    char lastKey = '\0';
+    int lastKeyCount = 0;
+
+    for (char key : conversion){
+        if (key == lastKey){
+            lastKeyCount++;
+            if (lastKeyCount == 2) {
+                selectedKey = 'A';
+            } else {
+                selectedKey = key;
+            }
+        } else {
+            lastKey = key;
+            lastKeyCount = 1;
+            selectedKey = key;
+        }
+
         keepPlaying = true;
-        usleep(100000*10*1); // Sleep for 0.1 seconds (adjust as needed)
+        usleep(100000*10*1);
+
+        if (lastKeyCount == 2) {
+            lastKey = key;
+        }
     }
+
+
+    //for (int i = 0; i < sizeof(keys) - 1; i++) {
+    //    selectedKey = keys[i];
+    //    keepPlaying = true;
+    //    usleep(100000*10*1); // Sleep for 0.1 seconds (adjust as needed)
+    //}
 
     keepPlaying = false; // Ensure playback stops on exit
 

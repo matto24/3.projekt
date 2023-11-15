@@ -10,6 +10,7 @@ private:
     const std::array<double, 4> DTMF2;
     int lastSound;
     int N;
+    int tempSound;
     std::vector<double> in;
     std::vector<fftw_complex> out;
     fftw_plan plan;
