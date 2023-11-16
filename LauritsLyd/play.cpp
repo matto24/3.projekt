@@ -12,9 +12,6 @@
 #include "playAudio.h"
 
 #define SAMPLE_RATE 44100
-#define PI 3.14159265358979323846
-#define AMPLITUDE 0.5
-#define TONE_DURATION 0.1
 
 volatile char selectedKey = '\0';
 volatile bool keepPlaying = false;
@@ -66,7 +63,6 @@ int main(int argc, char const *argv[]) {
     Pa_StopStream(stream);
     Pa_CloseStream(stream);
     Pa_Terminate();
-
     pthread_join(audioThreadId, NULL);  // Wait for audio thread to finish
 
     return 0;
