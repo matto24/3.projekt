@@ -9,6 +9,7 @@ struct ThreadArgs {
 
 class PlayAudio {
     private:
+std::atomic<bool> stop;
 #define SAMPLE_RATE 44100
 #define PI 3.14159265358979323846
 #define AMPLITUDE 0.5
@@ -17,7 +18,9 @@ class PlayAudio {
 // DTMF Frequencies (Hz)
 static const double dtmfFrequencies[4][4];
     public:
-    PlayAudio();
+    PlayAudio(){
+        stop = false;
+    };
     static void generateDTMFTone(char key, float* buffer, int frames);
     static void* audioThread(void* args);
     std::string toneList(std::string binaryNum);

@@ -62,6 +62,7 @@ void PlayAudio::generateDTMFTone(char key, float* buffer, int frames) {
     }
 }
 
+
 void* PlayAudio::audioThread(void* args) {
     ThreadArgs* threadArgs = (ThreadArgs*)args;
     PaStream* stream = threadArgs->stream;
@@ -71,8 +72,8 @@ void* PlayAudio::audioThread(void* args) {
     int frames = (int)(SAMPLE_RATE * TONE_DURATION); // Adjust buffer size
 
     float buffer[frames];  // Fixed-size buffer
-
-    while (1) {
+    
+    while (!stop) {
         if (*keepPlaying) {
             generateDTMFTone(*selectedKey, buffer, frames);
             Pa_WriteStream(stream, buffer, frames);

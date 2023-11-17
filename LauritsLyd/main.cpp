@@ -78,6 +78,9 @@ int main(int argc, char const *argv[])
     }
 
     keepPlaying = false; // Ensure playback stops on exit
+    
+    PlayAudio::stop = false;
+
 
     // Venter på at lyd tråden er færdig med at spille
     pthread_join(audioThreadId, NULL);
@@ -96,6 +99,7 @@ int main(int argc, char const *argv[])
     pa.OpenStream(8000, framesPrBuffer, numChannels);
     // Start recording stream
     pa.StartStream();
+
 
     const size_t ringBufferSize = 8000 * recordingDurationSeconds;
     std::vector<double> ringBuffer(ringBufferSize, 0.0);
