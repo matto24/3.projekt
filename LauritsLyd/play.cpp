@@ -17,15 +17,17 @@ volatile char selectedKey = '\0';
 volatile bool keepPlaying = false;
 
 int main(int argc, char const *argv[]) {
-    
     Pa_Initialize();
     PaStream* stream;
     Pa_OpenDefaultStream(&stream, 0, 1, paFloat32, SAMPLE_RATE, 4096, NULL, NULL);
     Pa_StartStream(stream);
     pthread_t audioThreadId;
 
+    //Instans a PlayAudio klassen
     PlayAudio audioPlayer;
+    //Instans a struct der holder threadArgs.
     ThreadArgs threadArgs;
+    
     threadArgs.stream = stream;
     threadArgs.selectedKey = &selectedKey;
     threadArgs.keepPlaying = &keepPlaying;
@@ -59,6 +61,8 @@ int main(int argc, char const *argv[]) {
     }
 
     keepPlaying = false; // Ensure playback stops on exit
+
+    
 
     Pa_StopStream(stream);
     Pa_CloseStream(stream);
