@@ -41,3 +41,4 @@ void PortAudioClass::StopStream() {
         stream = nullptr;
     }
 }
+

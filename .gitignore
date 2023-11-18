@@ -7,5 +7,6 @@ main
 *.so
 *.d
 *.csv
+*.jpg
 /build/   # Ignore the 'build' directory
 /bin/     # Ignore the 'bin' directory
