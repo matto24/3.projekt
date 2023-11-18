@@ -79,14 +79,19 @@ int main(int argc, char const *argv[])
 
     keepPlaying = false; // Ensure playback stops on exit
     
-    PlayAudio::stop = false;
+    ThreadArgs().stop = true;
 
+    std::cout << "Start listning" << std::endl;
 
     // Venter på at lyd tråden er færdig med at spille
     pthread_join(audioThreadId, NULL);
+    std::cout << "1" << std::endl;
     Pa_StopStream(playStream);
+    std::cout << "2" << std::endl;
     Pa_CloseStream(playStream);
+    std::cout << "3" << std::endl;
     Pa_Terminate();
+    std::cout << "4" << std::endl;
 
     //Optag nu
 

@@ -11,7 +11,7 @@
 
 #include "playAudio.h"
 
-PlayAudio::PlayAudio(){}
+
 
 
 const double PlayAudio::dtmfFrequencies[4][4] = {
@@ -21,7 +21,7 @@ const double PlayAudio::dtmfFrequencies[4][4] = {
 
 void PlayAudio::generateDTMFTone(char key, float* buffer, int frames) {
     int row, col;
-
+    
     switch (key) {
         case '1': row = 0; col = 0; break;
         case '2': row = 0; col = 1; break;
@@ -73,7 +73,7 @@ void* PlayAudio::audioThread(void* args) {
 
     float buffer[frames];  // Fixed-size buffer
     
-    while (!stop) {
+    while (!threadArgs->stop) {
         if (*keepPlaying) {
             generateDTMFTone(*selectedKey, buffer, frames);
             Pa_WriteStream(stream, buffer, frames);
