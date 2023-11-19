@@ -2,6 +2,7 @@
 
 #include <string>
 #include <portaudio.h>
+#include <mutex>
 
 struct ThreadArgs {
     PaStream* stream;
@@ -17,6 +18,8 @@ class PlayAudio {
 #define PI 3.14159265358979323846
 #define AMPLITUDE 0.5
 #define TONE_DURATION 0.1
+
+
 
 // DTMF Frequencies (Hz)
 static const double dtmfFrequencies[4][4];

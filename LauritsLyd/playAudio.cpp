@@ -62,8 +62,10 @@ void PlayAudio::generateDTMFTone(char key, float* buffer, int frames) {
     }
 }
 
+std::mutex mu;
 
 void* PlayAudio::audioThread(void* args) {
+    mu.lock();
     ThreadArgs* threadArgs = (ThreadArgs*)args;
     PaStream* stream = threadArgs->stream;
     volatile char* selectedKey = threadArgs->selectedKey;
@@ -82,7 +84,7 @@ void* PlayAudio::audioThread(void* args) {
             *selectedKey = '\0';  // Reset selected key after playing
         }
     }
-
+    mu.unlock();
     return NULL;
 }
 
