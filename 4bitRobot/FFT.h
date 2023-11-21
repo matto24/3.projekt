@@ -14,10 +14,13 @@ private:
     std::vector<double> in;
     std::vector<fftw_complex> out;
     fftw_plan plan;
+    bool startBit;
 
 public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
     double calculateAverage(const std::vector<float>& vec);
     int FFT(const std::vector<float>& audioData, double sampleRate);
+    void setStartBit(bool in);
+    bool getStartBit();
 };
