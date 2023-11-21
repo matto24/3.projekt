@@ -25,7 +25,6 @@ int main(int argc, char **argv)
 
     Drive robo(rb3_publisher); */
 
-    int result;
     DTMFDecoder decoder(1600);
     MessageInterpreter mi;
 
@@ -34,6 +33,7 @@ int main(int argc, char **argv)
     pa.OpenStream(sampleRate, framesPrBuffer, numChannels);
     pa.StartStream();
 
+    int result;
     std::vector<int> fundneToner;
 
     bool startBit = false;
@@ -45,6 +45,10 @@ int main(int argc, char **argv)
             startBit = false;
             mi.interpretMessage(fundneToner);
             fundneToner.clear();
+            if(mi.getExecuteRoute()){
+                shutdown = false;
+                //robo.commands(mi.getDrieCommands);
+            }
         }
 
         std::vector<float> buffer;
@@ -56,7 +60,7 @@ int main(int argc, char **argv)
             std::cout << result << std::endl;
         }
 
-        if (result == 2277 && !startBit)
+        if (result == 2277 && !startBit) // tonen 0 og startbit = false
         {
             startBit = true;
             fundneToner.clear();
@@ -69,11 +73,6 @@ int main(int argc, char **argv)
         {
             fundneToner.push_back(result);
             continue;
-        }
-        if ()
-        {
-            // robo.commands(driveCommands);
-            shutdown = true;
         }
     }
     // rclcpp::shutdown();

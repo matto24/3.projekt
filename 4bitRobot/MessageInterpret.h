@@ -11,6 +11,7 @@ public:
     MessageInterpreter();
     void interpretMessage(const std::vector<int>& inputSekvens);
     bool getExecuteRoute();
+    std::vector<std::pair<int, std::string>> getDrieCommands();
 
 private:
     std::map<int, std::string> toneToBitMap;
