@@ -13,24 +13,22 @@ void Drive::commands(std::vector<std::pair<int, std::string>> inputCommands) {
   for(int i=0; i<inputCommands.size(); i++) {
     switch (inputCommands[i].first) 
     {
-    case 0b111110: //Command-code
-        forwards(inputCommands[i].second);
-        break;
-    case 0b101010:
+    case 0b01: //Command-code
         turnRight(inputCommands[i].second);
         break;
-    case 0b010111: //Command-code
+    case 0b10:
+        turnleft(inputCommands[i].second);
+        break;
+    case 0b11: //Command-code
         backwards(inputCommands[i].second);
         break;
-    case 0b101110:
-        turnleft(inputCommands[i].second);
+    case 0b00:
         break;
     default:
         break;
     }
   }
 }
-
 
 void Drive::forwards(std::string binaryNum) {
     //Input is the distance in 1/10 m
