@@ -32,11 +32,11 @@ public:
         cmdB += L;
 
         //12 ,16 ,20
-        int checkVal = stoi((cmdB+dataB),nullptr,2);
+        int checkVal = stoi((cmdB),nullptr,2) + stoi((dataB),nullptr,2);
         std::bitset<9> check1(checkVal);
         std::string checksum = check1.to_string();
 
-        checksum = checksum.substr(0,3) + "1" + checksum.substr(3,3) + "1" + checksum.substr(6,3) + "1" + checksum.substr(9,checksum.size());
+        checksum = "1" + checksum.substr(0,3) + "1" + checksum.substr(3,3) + "1"+ checksum.substr(6,3);
 
 
         
@@ -57,7 +57,8 @@ public:
 
         // Increment the sequence number for the next command
        
-
+        std::cout << cmdB << " - " <<dataB <<" - " << checksum << std::endl;
+        while(1){};
         return commandString;
     }
 };
