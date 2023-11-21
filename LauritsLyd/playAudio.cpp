@@ -176,5 +176,5 @@ std::string PlayAudio::toneList(std::string binaryNum)
         }
     }
 
-    return output;
+    return "*" +output +"#";
 }
