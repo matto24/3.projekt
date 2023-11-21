@@ -41,14 +41,14 @@ int main(int argc, char **argv)
     int result;
     std::vector<int> fundneToner;
 
-    bool startBit = false;
+    decoder.setStartBit(false);
     bool shutdown = false;
 
     while (!shutdown)
     {
         if (fundneToner.size() > 5)
         {
-            startBit = false;
+            decoder.setStartBit(false);
             mi.interpretMessage(fundneToner);
             fundneToner.clear();
             if (mi.getExecuteRoute())
@@ -98,15 +98,15 @@ int main(int argc, char **argv)
             std::cout << result << std::endl;
         }
 
-        if (result == 2277 && !startBit) // tonen 0 og startbit = false
+        if (result == 2277 && !decoder.getStartBit()) // tonen 0 og startbit = false
         {
-            startBit = true;
+            decoder.setStartBit(true);
             fundneToner.clear();
             std::cout << "start" << std::endl;
             continue;
         }
 
-        if (startBit && result != 0)
+        if (decoder.getStartBit() && result != 0)
         {
             fundneToner.push_back(result);
             continue;
