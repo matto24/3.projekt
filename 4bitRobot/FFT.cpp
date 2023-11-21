@@ -17,6 +17,22 @@ DTMFDecoder::~DTMFDecoder() {
         fftw_destroy_plan(plan);
     }
 
+double calculateAverage(const std::vector<float>& vec) {
+    if (vec.empty()) {
+        std::cerr << "Error: Cannot calculate average of an empty vector." << std::endl;
+        return 0.0;
+    }
+
+    int sum = 0;
+    for (float element : vec) {
+        sum += element;
+    }
+
+    double average = static_cast<double>(sum) / vec.size();
+
+    return average;
+}
+
 int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate) 
 {
         int N = audioData.size();
@@ -28,7 +44,7 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
         // Execute the FFT plan
         fftw_execute(plan);
 
-        double threshold = 100; // LAV NOGET FEDT TIL THRESHOLD
+        double threshold = calculateAverage(audioData); // LAV NOGET FEDT TIL THRESHOLD
         double largestAmp1 = threshold;
         double largestAmp2 = threshold;
         double largestFreq1 = 0.0;

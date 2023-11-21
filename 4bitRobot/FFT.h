@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 
 #include <vector>
 #include <array>
@@ -18,6 +18,6 @@ private:
 public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
-
+    double calculateAverage(const std::vector<float>& vec);
     int FFT(const std::vector<float>& audioData, double sampleRate);
 };
