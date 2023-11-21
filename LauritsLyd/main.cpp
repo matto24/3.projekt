@@ -53,7 +53,7 @@ int main(int argc, char const *argv[])
         threadArgs.keepPlaying = &keepPlaying;
 
         pthread_create(&audioThreadId, NULL, &PlayAudio::audioThread, (void *)&threadArgs);
-        
+
         std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
         char lastKey = '\0';
@@ -90,17 +90,18 @@ int main(int argc, char const *argv[])
         }
 
         keepPlaying = false; // Ensure playback stops on exit
-
+        
         ThreadArgs().stop = true;
-
+        
         // Venter på at lyd tråden er færdig med at spille
         
+
         Pa_StopStream(playStream);
         Pa_CloseStream(playStream);
         Pa_Terminate();
 
         
-        //pthread_join(audioThreadId, NULL);
+
 
         // Optag nu
 
