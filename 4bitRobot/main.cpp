@@ -6,8 +6,10 @@
 #include "MessageInterpret.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
-//#include "rb3_cpp_publisher.h"
-//#include "drive.h"
+#include "playAudio.h"
+
+// #include "rb3_cpp_publisher.h"
+// #include "drive.h"
 #include <unistd.h>
 
 const int sampleRate = 8000;
@@ -15,9 +17,8 @@ const double recordingDurationSeconds = 0.2; // resolution = (sample_rate /(samp
 const int framesPrBuffer = 1600;
 const int numChannels = 1;
 
-bool shutdown = false;
-
-
+volatile char selectedKey = '\0';
+volatile bool keepPlaying = false;
 
 int main(int argc, char **argv)
 {
@@ -29,68 +30,90 @@ int main(int argc, char **argv)
 
     Drive robo(rb3_publisher); */
 
-    int result;
     DTMFDecoder decoder(1600);
+    MessageInterpreter mi;
 
     PortAudioClass pa;
     pa.Initialize();
     pa.OpenStream(sampleRate, framesPrBuffer, numChannels);
     pa.StartStream();
 
-    const size_t ringBufferSize = sampleRate * numChannels * recordingDurationSeconds;
-    std::vector<double> ringBuffer(ringBufferSize, 0.0);
-    size_t ringBufferIndex = 0;
+    int result;
     std::vector<int> fundneToner;
+
     bool startBit = false;
+    bool shutdown = false;
 
     while (!shutdown)
     {
+        if (fundneToner.size() > 5)
+        {
+            startBit = false;
+            mi.interpretMessage(fundneToner);
+            fundneToner.clear();
+            if (mi.getExecuteRoute())
+            {
+                shutdown = true;
+                // robo.commands(mi.getDriveCommands);
+            }
+            
+            usleep(500000);
+            Pa_Initialize();
+            PaStream *playStream;
+            Pa_OpenDefaultStream(&playStream, 0, 1, paFloat32, 44100, 4096, NULL, NULL);
+            Pa_StartStream(playStream);
+            pthread_t audioThreadId;
+            // Instans a PlayAudio klassen
+            PlayAudio audioPlayer;
+            // Instans a struct der holder threadArgs.
+            ThreadArgs threadArgs;
+            threadArgs.stream = playStream;
+            threadArgs.selectedKey = &selectedKey;
+            threadArgs.keepPlaying = &keepPlaying;
+
+            pthread_create(&audioThreadId, NULL, &PlayAudio::audioThread, (void *)&threadArgs);
+
+            std::string acknowledgement = "1";
+            std::cout << "Der afspilles ack" << std::endl;
+
+            for (char key : acknowledgement)
+            {
+                selectedKey = key;
+                keepPlaying = true;
+                usleep(1000000);
+            }
+            keepPlaying = false; // Ensure playback stops on exit
+            ThreadArgs().stop = true;
+            Pa_StopStream(playStream);
+            Pa_CloseStream(playStream);
+            Pa_Terminate();
+        }
+
         std::vector<float> buffer;
         pa.ReadStream(buffer, framesPrBuffer);
+        result = decoder.FFT(buffer, sampleRate);
 
-        // Copy into ring buffer
-        for (int i = 0; i < framesPrBuffer; ++i)
+        if (result != 0)
         {
-            ringBuffer[ringBufferIndex] = buffer[i];
-            ringBufferIndex = (ringBufferIndex + 1) % ringBufferSize;
+            std::cout << result << std::endl;
         }
-        // If the ring buffer is filled, process it
-        if (ringBufferIndex == 0)
-        {   
-            result = decoder.FFT(ringBuffer, sampleRate);
-            if (result != 0)
-            {
-                std::cout << result << std::endl;
-            }
 
-            if (result == 2150 && !startBit)
-            {
-                startBit = true;
-                fundneToner.clear();
-                std::cout << "start" << std::endl;
+        if (result == 2277 && !startBit) // tonen 0 og startbit = false
+        {
+            startBit = true;
+            fundneToner.clear();
+            std::cout << "start" << std::endl;
+            continue;
+        }
 
-                continue;
-            }
-            else if (result == 2418 && startBit)
-            { // "# - stopbit"
-                std::cout << "end" << std::endl;
-                interpretMessage(fundneToner, &robo);
-                startBit = false;
-
-                continue;
-            }
-
-            if (startBit && result != 0)
-            {
-                fundneToner.push_back(result);
-            }
-            if(result == 2574) {
-                robo.commands(driveCommands);
-                shutdown = true;
-            }
+        if (startBit && result != 0)
+        {
+            fundneToner.push_back(result);
+            continue;
         }
     }
-    rclcpp::shutdown();
+
+    // rclcpp::shutdown();
     return 0;
 }
 

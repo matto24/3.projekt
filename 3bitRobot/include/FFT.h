@@ -1,4 +1,4 @@
-    #pragma once
+#pragma once
 
 #include <vector>
 #include <array>
@@ -10,7 +10,6 @@ private:
     const std::array<double, 4> DTMF2;
     int lastSound;
     int N;
-    int tempSound;
     std::vector<double> in;
     std::vector<fftw_complex> out;
     fftw_plan plan;
@@ -18,6 +17,6 @@ private:
 public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
-    double calculateAverage(const std::vector<float>& vec);
-    int FFT(const std::vector<float>& audioData, double sampleRate);
+
+    int FFT(const std::vector<double>& audioData, double sampleRate);
 };

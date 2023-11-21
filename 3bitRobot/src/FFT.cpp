@@ -9,7 +9,7 @@
 
 DTMFDecoder::DTMFDecoder(int N) : DTMF1({697.5, 770, 852, 941}),    // HUSK NU FOR GUDS SKYLD AT ÆNDRE ALLE TAL ALA 697.5
                                   DTMF2({1209.5, 1336, 1477, 1633}), 
-                                  lastSound(0), tempSound(0), in(N), out(N / 2 + 1) {
+                                  lastSound(0), in(N), out(N / 2 + 1) {
     plan = fftw_plan_dft_r2c_1d(N, in.data(), out.data(), FFTW_ESTIMATE);
 }
 
@@ -17,23 +17,7 @@ DTMFDecoder::~DTMFDecoder() {
         fftw_destroy_plan(plan);
     }
 
-double DTMFDecoder::calculateAverage(const std::vector<float>& vec) {
-    if (vec.empty()) {
-        std::cerr << "Error: Cannot calculate average of an empty vector." << std::endl;
-        return 0.0;
-    }
-
-    int sum = 0;
-    for (float element : vec) {
-        sum += element;
-    }
-
-    double average = static_cast<double>(sum) / vec.size();
-
-    return average;
-}
-
-int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate) 
+int DTMFDecoder::FFT(const std::vector<double>& audioData, double sampleRate) 
 {
         int N = audioData.size();
         //std::cout << N << std::endl;
@@ -44,7 +28,7 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
         // Execute the FFT plan
         fftw_execute(plan);
 
-        double threshold = calculateAverage(audioData)+100; // LAV NOGET FEDT TIL THRESHOLD
+        double threshold = 10; // LAV NOGET FEDT TIL THRESHOLD
         double largestAmp1 = threshold;
         double largestAmp2 = threshold;
         double largestFreq1 = 0.0;
@@ -76,14 +60,8 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
             // If both frequencies are found, calculate the detected sound
             if (largestFreq2 != 0) {
                 detectedSound = static_cast<int>(largestFreq1 + largestFreq2);
-                
                 if (lastSound == detectedSound) {
                     return 0;
-                }
-                if (detectedSound == 2330){
-                    tempSound = lastSound;
-                    lastSound = detectedSound;
-                    return tempSound;
                 }
                 lastSound = detectedSound;
                 return detectedSound;
