@@ -30,7 +30,7 @@ bool MessageInterpreter::getExecuteRoute(){
     return executeRoute;
 }
 
-std::vector<std::pair<int, std::string>> MessageInterpreter::getDrieCommands(){
+std::vector<std::pair<int, std::string>> MessageInterpreter::getDriveCommands(){
     return driveCommands;
 }
 
