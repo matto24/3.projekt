@@ -9,7 +9,7 @@
 #include "playAudio.h"
 
 // #include "rb3_cpp_publisher.h"
-// #include "drive.h"
+#include "drive.h"
 #include <unistd.h>
 
 const int sampleRate = 8000;
@@ -22,13 +22,12 @@ volatile bool keepPlaying = false;
 
 int main(int argc, char **argv)
 {
-    /*
-    rclcpp::init(argc, argv);
-    auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(rb3_publisher);
+   // rclcpp::init(argc, argv);
+   // auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
+   // rclcpp::executors::SingleThreadedExecutor executor;
+   // executor.add_node(rb3_publisher);
 
-    Drive robo(rb3_publisher); */
+    // Drive robo(rb3_publisher);
 
     DTMFDecoder decoder(1600);
     MessageInterpreter mi;
@@ -54,10 +53,11 @@ int main(int argc, char **argv)
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
-                // robo.commands(mi.getDriveCommands);
+                //robo.commands(mi.getDriveCommands());
+                
             }
             
-            usleep(500000);
+            usleep(1500000);
             Pa_Initialize();
             PaStream *playStream;
             Pa_OpenDefaultStream(&playStream, 0, 1, paFloat32, 44100, 4096, NULL, NULL);
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
         }
     }
 
-    // rclcpp::shutdown();
+    //rclcpp::shutdown();
     return 0;
 }
 
