@@ -149,19 +149,14 @@ void *PlayAudio::audioThread(void *args)
 
 std::string PlayAudio::toneList(std::string binaryNum)
 {
-    std::map<std::string, std::string> toneToBitMap = {{"0", "000"}, {"1", "001"}, {"2", "010"}, {"3", "011"}, {"4", "100"}, {"5", "101"}, {"6", "110"}, {"7", "111"}, {"8", "0"}, {"9", "1"}};
+    std::map<std::string, std::string> toneToBitMap = {{"0", "0000"}, {"1", "0001"}, {"2", "0010"}, {"3", "0011"}, {"4", "0100"}, {"5", "0101"}, {"6", "0110"}, {"7", "0111"}, {"8", "1000"}, {"9", "1001"}, {"A", "1010"}, {"B", "1011"}, {"C", "1100"}, {"D", "1101"}, {"*", "1110"}, {"#", "1111"}};
     std::string output;
 
-    // Check length of binary number. If binaryNum%3 != 0, then append 0s at beginning to make it.
-    while (binaryNum.size() % 3 != 0)
-    {
-        binaryNum.insert(12, "0");
-    }
     // Iterator
     std::map<std::string, std::string>::iterator itr;
-    for (int i = 0; i < binaryNum.size() / 3; i++)
+    for (int i = 0; i < binaryNum.size() / 4; i++)
     {
-        std::string firstThree = binaryNum.substr(3 * i, 3);
+        std::string firstThree = binaryNum.substr(4 * i, 4);
         for (itr = toneToBitMap.begin(); itr != toneToBitMap.end(); ++itr)
         {
             if (itr->second == firstThree)
