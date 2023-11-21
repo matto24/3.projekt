@@ -56,19 +56,17 @@ int main(int argc, char **argv)
                 shutdown = true;
                 // robo.commands(mi.getDriveCommands);
             }
-
+            
+            usleep(500000);
             Pa_Initialize();
             PaStream *playStream;
-
             Pa_OpenDefaultStream(&playStream, 0, 1, paFloat32, 44100, 4096, NULL, NULL);
             Pa_StartStream(playStream);
             pthread_t audioThreadId;
-
             // Instans a PlayAudio klassen
             PlayAudio audioPlayer;
             // Instans a struct der holder threadArgs.
             ThreadArgs threadArgs;
-
             threadArgs.stream = playStream;
             threadArgs.selectedKey = &selectedKey;
             threadArgs.keepPlaying = &keepPlaying;
@@ -77,23 +75,18 @@ int main(int argc, char **argv)
 
             std::string acknowledgement = "1";
             std::cout << "Der afspilles ack" << std::endl;
-            
+
             for (char key : acknowledgement)
             {
                 selectedKey = key;
                 keepPlaying = true;
                 usleep(1000000);
             }
-
             keepPlaying = false; // Ensure playback stops on exit
             ThreadArgs().stop = true;
-
-            // Venter på at lyd tråden er færdig med at spille
-
             Pa_StopStream(playStream);
             Pa_CloseStream(playStream);
             Pa_Terminate();
-            usleep(500000);
         }
 
         std::vector<float> buffer;
