@@ -47,8 +47,11 @@ int main(int argc, char **argv)
             fundneToner.clear();
             if(mi.getExecuteRoute()){
                 shutdown = false;
-                //robo.commands(mi.getDrieCommands);
+                //robo.commands(mi.getDriveCommands);
             }
+
+            
+
         }
 
         std::vector<float> buffer;
@@ -65,7 +68,6 @@ int main(int argc, char **argv)
             startBit = true;
             fundneToner.clear();
             std::cout << "start" << std::endl;
-
             continue;
         }
 
@@ -75,6 +77,7 @@ int main(int argc, char **argv)
             continue;
         }
     }
+
     // rclcpp::shutdown();
     return 0;
 }
