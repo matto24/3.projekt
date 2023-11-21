@@ -35,6 +35,7 @@
                 if(out.size() > 0){
                     cv::destroyAllWindows();
                     saveFinalRoute();
+                    out.push_back(cmdG.createCommand(0,0));
                     return out;
                 }
             }

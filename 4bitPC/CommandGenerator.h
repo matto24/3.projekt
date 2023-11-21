@@ -18,6 +18,9 @@ public:
         std::string dataB = dataBin.to_string();
         std::string L = "11";
 
+        if(cmdB == "00"){
+            dataB = "11100111";
+        }
 
         if(dataB.substr(0,4) == "0000"){
            dataB = "1111" + dataB.substr(3,4);
@@ -31,7 +34,7 @@ public:
 
         cmdB += L;
 
-        //12 ,16 ,20
+        
         int checkVal = stoi((cmdB),nullptr,2) + stoi((dataB),nullptr,2);
         std::bitset<9> check1(checkVal);
         std::string checksum = check1.to_string();
@@ -39,14 +42,7 @@ public:
         checksum = "1" + checksum.substr(0,3) + "1" + checksum.substr(3,3) + "1"+ checksum.substr(6,3);
 
 
-        
-
-
-       
-
-        //int seqBin = std::stoi(sequenceNumber.toString(),nullptr,2);
-
-        // Concatenate binary strings
+      
         std::string commandString = "0000" + cmdB + dataB + checksum;
 
         // Calculate parity bit (even parity)
