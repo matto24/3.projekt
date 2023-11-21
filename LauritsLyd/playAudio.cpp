@@ -142,6 +142,11 @@ void *PlayAudio::audioThread(void *args)
             *selectedKey = '\0'; // Reset selected key after playing
         }
     }
+
+    std::cout << std::this_thread::get_id() << ": Lort" << std::endl;
+
+    pthread_exit(NULL);
+
     mu.unlock();
     return NULL;
 }
@@ -171,5 +176,5 @@ std::string PlayAudio::toneList(std::string binaryNum)
         }
     }
 
-    return output;
+    return "*" +output +"#";
 }
