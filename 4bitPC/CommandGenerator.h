@@ -57,8 +57,7 @@ public:
 
         // Increment the sequence number for the next command
        
-        std::cout << cmdB << " - " <<dataB <<" - " << checksum << std::endl;
-        while(1){};
+        //std::cout << cmdB << " - " <<dataB <<" - " << checksum << std::endl;
         return commandString;
     }
 };

@@ -66,7 +66,7 @@ int main(int argc, char const *argv[])
                 lastKeyCount++;
                 if (lastKeyCount == 2)
                 {
-                    selectedKey = 'A';
+                    selectedKey = '0';
                 }
                 else
                 {
