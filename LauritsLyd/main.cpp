@@ -23,8 +23,9 @@ volatile bool keepPlaying = false;
 
 std::vector<float> recordBuffer;
 bool shutdown = false;
-int framesPrBuffer = 1600;
-double recordingDurationSeconds = 0.2;
+const int sampleRate = 8000;
+const int framesPrBuffer = 1600;
+const double recordingDurationSeconds = 0.2;
 const int numChannels = 1;
 
 int main(int argc, char const *argv[])
@@ -33,7 +34,7 @@ int main(int argc, char const *argv[])
     RouteUI ui;
     std::vector<std::string> moves = ui.run();
 
-    for (int i = 0; i< moves.size();)
+    for (int m = 0; m< moves.size();)
     {
         Pa_Initialize();
         PaStream *playStream;
@@ -52,8 +53,8 @@ int main(int argc, char const *argv[])
         threadArgs.keepPlaying = &keepPlaying;
 
         pthread_create(&audioThreadId, NULL, &PlayAudio::audioThread, (void *)&threadArgs);
-
-        std::string conversion = audioPlayer.toneList(moves[i]);
+        
+        std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
         char lastKey = '\0';
         int lastKeyCount = 0;
@@ -97,6 +98,8 @@ int main(int argc, char const *argv[])
         Pa_StopStream(playStream);
         Pa_CloseStream(playStream);
         Pa_Terminate();
+
+        
         //pthread_join(audioThreadId, NULL);
 
         // Optag nu
@@ -110,7 +113,7 @@ int main(int argc, char const *argv[])
         // Start recording stream
         pa.StartStream();
 
-        const size_t ringBufferSize = 8000 * recordingDurationSeconds;
+        const size_t ringBufferSize = sampleRate * recordingDurationSeconds;
         std::vector<double> ringBuffer(ringBufferSize, 0.0);
         size_t ringBufferIndex = 0;
         std::vector<int> fundneToner;
@@ -130,14 +133,14 @@ int main(int argc, char const *argv[])
             // If the ring buffer is filled, process it
             if (ringBufferIndex == 0)
             {
-                result = decoder.FFT(ringBuffer, SAMPLE_RATE);
+                result = decoder.FFT(ringBuffer, sampleRate);
                 std::cout << "result " << result << std::endl;
-                // Tone C
+                // Tone 1
                 if (result == 1907)
                 {
                     shutdown = true;
                     std::cout << "Play Next" << std::endl;
-                    i++;
+                    m++;
                 }
             }
             if(std::chrono::high_resolution_clock::now()-start > std::chrono::seconds(5)){
@@ -147,6 +150,7 @@ int main(int argc, char const *argv[])
         }
         shutdown = false;
         pa.StopStream();
+        
         
     }
 
