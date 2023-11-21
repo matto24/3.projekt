@@ -2,6 +2,7 @@
 
 #include <string>
 #include <portaudio.h>
+#include <atomic>
 #include <mutex>
 
 struct ThreadArgs {

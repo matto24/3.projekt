@@ -6,6 +6,8 @@
 #include "MessageInterpret.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
+#include "playAudio.h"
+
 // #include "rb3_cpp_publisher.h"
 // #include "drive.h"
 #include <unistd.h>
@@ -14,6 +16,9 @@ const int sampleRate = 8000;
 const double recordingDurationSeconds = 0.2; // resolution = (sample_rate /(sample_rate*duration))
 const int framesPrBuffer = 1600;
 const int numChannels = 1;
+
+volatile char selectedKey = '\0';
+volatile bool keepPlaying = false;
 
 int main(int argc, char **argv)
 {
@@ -41,17 +46,54 @@ int main(int argc, char **argv)
 
     while (!shutdown)
     {
-        if(fundneToner.size() > 5){
+        if (fundneToner.size() > 5)
+        {
             startBit = false;
             mi.interpretMessage(fundneToner);
             fundneToner.clear();
-            if(mi.getExecuteRoute()){
-                shutdown = false;
-                //robo.commands(mi.getDriveCommands);
+            if (mi.getExecuteRoute())
+            {
+                shutdown = true;
+                // robo.commands(mi.getDriveCommands);
             }
 
-            
+            Pa_Initialize();
+            PaStream *playStream;
 
+            Pa_OpenDefaultStream(&playStream, 0, 1, paFloat32, 44100, 4096, NULL, NULL);
+            Pa_StartStream(playStream);
+            pthread_t audioThreadId;
+
+            // Instans a PlayAudio klassen
+            PlayAudio audioPlayer;
+            // Instans a struct der holder threadArgs.
+            ThreadArgs threadArgs;
+
+            threadArgs.stream = playStream;
+            threadArgs.selectedKey = &selectedKey;
+            threadArgs.keepPlaying = &keepPlaying;
+
+            pthread_create(&audioThreadId, NULL, &PlayAudio::audioThread, (void *)&threadArgs);
+
+            std::string acknowledgement = "1";
+            std::cout << "Der afspilles ack" << std::endl;
+            
+            for (char key : acknowledgement)
+            {
+                selectedKey = key;
+                keepPlaying = true;
+                usleep(1000000);
+            }
+
+            keepPlaying = false; // Ensure playback stops on exit
+            ThreadArgs().stop = true;
+
+            // Venter på at lyd tråden er færdig med at spille
+
+            Pa_StopStream(playStream);
+            Pa_CloseStream(playStream);
+            Pa_Terminate();
+            usleep(500000);
         }
 
         std::vector<float> buffer;

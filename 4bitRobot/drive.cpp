@@ -1,3 +1,4 @@
+/*
 #include "drive.h"
 #include <chrono>
 #include <iostream>
@@ -101,3 +102,4 @@ void Drive::turnRight(std::string binaryNum) {
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
+*/
