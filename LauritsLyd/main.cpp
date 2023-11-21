@@ -7,6 +7,8 @@
 #include <vector>
 #include <iostream>
 #include <bits/stdc++.h>
+#include <thread>
+#include <mutex>
 
 #include "playAudio.h"
 #include "FFT.h"
