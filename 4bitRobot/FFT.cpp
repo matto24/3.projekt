@@ -17,7 +17,7 @@ DTMFDecoder::~DTMFDecoder() {
         fftw_destroy_plan(plan);
     }
 
-int DTMFDecoder::FFT(const std::vector<double>& audioData, double sampleRate) 
+int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate) 
 {
         int N = audioData.size();
         //std::cout << N << std::endl;

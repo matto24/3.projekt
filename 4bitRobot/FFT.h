@@ -19,5 +19,5 @@ public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
 
-    int FFT(const std::vector<double>& audioData, double sampleRate);
+    int FFT(const std::vector<float>& audioData, double sampleRate);
 };

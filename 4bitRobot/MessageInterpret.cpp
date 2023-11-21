@@ -1,9 +1,14 @@
-#include "MessageInterpreter.h"
+#include "MessageInterpret.h"
 #include <iostream>
 
-MessageInterpreter::MessageInterpreter() : lastSequenceNumber(0) {
+MessageInterpreter::MessageInterpreter(){
     // Initialize the toneToBitMap
+    executeRoute = false;
     toneToBitMap = {{2277, "000"}, {1907, "001"}, {2033, "010"}, {2174, "011"}, {1979, "100"}, {2106, "101"}, {2247, "110"}, {2061, "111"}, {2188, "0"}, {2329, "1"}};
+}
+
+bool MessageInterpreter::getExecuteRoute(){
+    return executeRoute;
 }
 
 void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) {
@@ -30,19 +35,7 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
         //return error?;
     }
     
-        // Sequence number check
 
-    int sequenceNumber = stoi(bits.substr(0, 6), nullptr, 2);
-
-    std::cout << "seqNr: " << sequenceNumber << std::endl;
-
-    if (sequenceNumber != lastSequenceNumber + 1)
-    {
-        lastSequenceNumber = 0; // eller hvad skal der ske ved fejl
-        std::cout << "sequence number fail" << std::endl;
-        //return error?;
-    } 
-    lastSequenceNumber = sequenceNumber;
 
         //Execute command
     int commandInt = stoi(bits.substr(6, 6), nullptr, 2);

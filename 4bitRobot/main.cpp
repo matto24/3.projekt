@@ -6,18 +6,14 @@
 #include "MessageInterpret.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
-//#include "rb3_cpp_publisher.h"
-//#include "drive.h"
+// #include "rb3_cpp_publisher.h"
+// #include "drive.h"
 #include <unistd.h>
 
 const int sampleRate = 8000;
 const double recordingDurationSeconds = 0.2; // resolution = (sample_rate /(sample_rate*duration))
 const int framesPrBuffer = 1600;
 const int numChannels = 1;
-
-bool shutdown = false;
-
-
 
 int main(int argc, char **argv)
 {
@@ -31,66 +27,56 @@ int main(int argc, char **argv)
 
     int result;
     DTMFDecoder decoder(1600);
+    MessageInterpreter mi;
 
     PortAudioClass pa;
     pa.Initialize();
     pa.OpenStream(sampleRate, framesPrBuffer, numChannels);
     pa.StartStream();
 
-    const size_t ringBufferSize = sampleRate * numChannels * recordingDurationSeconds;
-    std::vector<double> ringBuffer(ringBufferSize, 0.0);
-    size_t ringBufferIndex = 0;
     std::vector<int> fundneToner;
+
     bool startBit = false;
+    bool shutdown = false;
 
     while (!shutdown)
     {
+        if(fundneToner.size() > 5){
+            startBit = false;
+            mi.interpretMessage(fundneToner);
+            fundneToner.clear();
+        }
+
         std::vector<float> buffer;
         pa.ReadStream(buffer, framesPrBuffer);
+        result = decoder.FFT(buffer, sampleRate);
 
-        // Copy into ring buffer
-        for (int i = 0; i < framesPrBuffer; ++i)
+        if (result != 0)
         {
-            ringBuffer[ringBufferIndex] = buffer[i];
-            ringBufferIndex = (ringBufferIndex + 1) % ringBufferSize;
+            std::cout << result << std::endl;
         }
-        // If the ring buffer is filled, process it
-        if (ringBufferIndex == 0)
-        {   
-            result = decoder.FFT(ringBuffer, sampleRate);
-            if (result != 0)
-            {
-                std::cout << result << std::endl;
-            }
 
-            if (result == 2150 && !startBit)
-            {
-                startBit = true;
-                fundneToner.clear();
-                std::cout << "start" << std::endl;
+        if (result == 2277 && !startBit)
+        {
+            startBit = true;
+            fundneToner.clear();
+            std::cout << "start" << std::endl;
 
-                continue;
-            }
-            else if (result == 2418 && startBit)
-            { // "# - stopbit"
-                std::cout << "end" << std::endl;
-                interpretMessage(fundneToner, &robo);
-                startBit = false;
+            continue;
+        }
 
-                continue;
-            }
-
-            if (startBit && result != 0)
-            {
-                fundneToner.push_back(result);
-            }
-            if(result == 2574) {
-                robo.commands(driveCommands);
-                shutdown = true;
-            }
+        if (startBit && result != 0)
+        {
+            fundneToner.push_back(result);
+            continue;
+        }
+        if ()
+        {
+            // robo.commands(driveCommands);
+            shutdown = true;
         }
     }
-    rclcpp::shutdown();
+    // rclcpp::shutdown();
     return 0;
 }
 
