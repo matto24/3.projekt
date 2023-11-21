@@ -11,6 +11,10 @@ bool MessageInterpreter::getExecuteRoute(){
     return executeRoute;
 }
 
+std::vector<std::pair<int, std::string>> MessageInterpreter::getDrieCommands(){
+    return driveCommands;
+}
+
 void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) {
         //Create string of bits
     std::string bits;
@@ -57,6 +61,8 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     case 0b101110:
         driveCommands.push_back(std::make_pair(commandInt, data));
         break;
+    case 0b0011:
+        executeRoute = true;
     default:
         break;
     }
