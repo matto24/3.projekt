@@ -24,7 +24,7 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     }
     std::cout << bits << std::endl;
 
-    //Parity Check:
+    /*//Parity Check:
     int oneCount = 0;
     for (char c : bits)
     {
@@ -32,12 +32,13 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
             oneCount++;
         }       
     }
+
     std::cout << oneCount << std::endl;
     if (bits.substr(bits.length() - 1) == "1" && !oneCount % 2 == 0)
     {
         std::cout << "parity fail" << std::endl;
         //return error?;
-    }
+    } */
     
 
 
