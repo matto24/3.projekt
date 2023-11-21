@@ -61,28 +61,38 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     } */
     
 
+    // Data
+    std::string data = bits.substr(8, 8);
+    if(bits[2] == '0'){
+        data.replace(0,4, "0000");
+    } else if(bits[3] == '0'){
+        data.replace(4,4, "0000");
+    }
+
+    // Checksum
+    std::string checksumTarget = bits.substr(13, 3) + bits.substr(17, 3) + bits.substr(21, 3);
+    int checksumIntTarget = stoi(checksumTarget, nullptr, 2);
+    int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(8, 8), nullptr, 2);
+
+    if (checksumIntCount != checksumIntTarget){
+        return; 
+    }
 
         //Execute command
-    int commandInt = stoi(bits.substr(6, 6), nullptr, 2);
+    int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
     
-    int dataFieldBitLength = bits.size() - 13; //13bits = 6 til seqNr., 6 til command og 1 til parity
-    std::string data = bits.substr(12, dataFieldBitLength);
-
     switch (commandInt) 
     {
-    case 0b111110: //Command-code
+    case 0b01: //Command-code
         driveCommands.push_back(std::make_pair(commandInt, data));
         break;
-    case 0b101010:
+    case 0b10:
         driveCommands.push_back(std::make_pair(commandInt, data));
         break;
-    case 0b010111: //Command-code
+    case 0b11: //Command-code
         driveCommands.push_back(std::make_pair(commandInt, data));
         break;
-    case 0b101110:
-        driveCommands.push_back(std::make_pair(commandInt, data));
-        break;
-    case 0b0011:
+    case 0b00:
         executeRoute = true;
     default:
         break;

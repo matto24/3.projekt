@@ -1,3 +1,4 @@
+#pragma once
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
 
@@ -23,7 +24,7 @@ public:
         msg.linear.x = lin_vel_cmd;
         msg.linear.y = 0;
         msg.linear.z = 0;
-        RCLCPP_INFO(this->get_logger(), "Publishing: %f , %f", this->msg.linear.x, this->msg.angular.z);
+       // RCLCPP_INFO(this->get_logger(), "Publishing: %f , %f", this->msg.linear.x, this->msg.angular.z);
         publisher_->publish(msg);
     }
 
