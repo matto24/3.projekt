@@ -6,7 +6,7 @@ MessageInterpreter::MessageInterpreter(){
     executeRoute = false;
     toneToBitMap = {
     {2277, "0000"}, //0
-    {1907, "0001"}, //1
+    {1906, "0001"}, //1
     {2033, "0010"}, //2
     {2174, "0011"}, //3
     {1979, "0100"}, //4
@@ -73,12 +73,12 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     int checksumIntTarget = stoi(checksumTarget, nullptr, 2);
     int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(4, 8), nullptr, 2);
 
-    std::cout << "checksum Target: " << checksumTarget << std::endl;
-    std::cout << "checksum Int Target: " << checksumIntTarget << std::endl;
-    std::cout << "checksum Int Count: " << checksumIntCount << std::endl;
 
-     if (checksumIntCount != checksumIntTarget){
+    if (checksumIntCount != checksumIntTarget){
+         std::cout << "Forkert checksum" << std::endl;
          return false; 
+     } else {
+        std::cout << "rigtig checksum" << std::endl;
      }
 
         //Execute command
