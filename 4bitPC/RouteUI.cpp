@@ -21,15 +21,15 @@
                     //std::cout << i << std::endl;
                     if(ad.second > 0){
                         out.push_back(cmdG.createCommand(1,std::abs(ad.second * (180/M_PI))));
-                        //std::cout << "Drej til højre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(42,std::abs(ad.second * (180/M_PI))) << std::endl;
+                        std::cout << "Drej til højre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(1,std::abs(ad.second * (180/M_PI))) << std::endl;
                     }
                     else if(ad.second < 0){
                         out.push_back(cmdG.createCommand(2,std::abs(ad.second * (180/M_PI))));
-                        //std::cout << "Drej til venstre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(46,std::abs(ad.second * (180/M_PI))) << std::endl;
+                        std::cout << "Drej til venstre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(2,std::abs(ad.second * (180/M_PI))) << std::endl;
                     }
                     if(std::abs(ad.first) > 0){
                         out.push_back(cmdG.createCommand(3,std::abs(ad.first)));
-                        //std::cout << "Kør frem i: " << std::abs(ad.first) << " pixel -> " << cmdG.createCommand(62,std::abs(ad.first)) << std::endl;
+                        std::cout << "Kør frem i: " << std::abs(ad.first) << " decimeter -> " << cmdG.createCommand(3,std::abs(ad.first)) << std::endl;
                     }
                 }
                 if(out.size() > 0){
@@ -67,7 +67,7 @@
     std::pair<double,double> RouteUI::calc_Ang_Dist(const cv::Point& point1, const cv::Point& point2, double prev) {
         double dis_x = point2.x - point1.x;
         double dis_y = point2.y - point1.y;
-        return {sqrt(dis_x * dis_x + dis_y * dis_y)/8, atan2(dis_y,dis_x)-prev};
+        return {(30*sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), atan2(dis_y,dis_x)-prev};
     }
 
    

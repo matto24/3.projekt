@@ -13,6 +13,7 @@ public:
     std::string createCommand(int command, int data) {
         
         std::bitset<2> cmdBin(command);
+        std::cout << cmdBin.to_string() << std::endl;
         std::string cmdB = cmdBin.to_string();
         std::bitset<8> dataBin(data);
         std::string dataB = dataBin.to_string();
@@ -27,7 +28,7 @@ public:
            L = "01";
         }
 
-        if(dataB.substr(3,4) == "0000"){
+        if(dataB.substr(4,4) == "0000"){
             dataB = dataB.substr(0,4) + "1111";
             L = "10";
         }
@@ -53,7 +54,7 @@ public:
 
         // Increment the sequence number for the next command
        
-        //std::cout << cmdB << " - " <<dataB <<" - " << checksum << std::endl;
+        std::cout << cmdB << " - " <<dataB <<" - " << checksum << std::endl;
         return commandString;
     }
 };

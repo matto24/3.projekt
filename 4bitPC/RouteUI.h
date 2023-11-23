@@ -8,6 +8,7 @@ public:
     RouteUI() {
         
         image = cv::imread("test.jpg");
+        dims = image.size();
         //image = cv::Mat::ones(800, 800, CV_8U) * 255;
         cv::namedWindow("Route UI");
         cv::setMouseCallback("Route UI", onMouse, this);
@@ -18,6 +19,7 @@ public:
     std::vector<std::string> run();
 
 private:
+    cv::Size2d dims;
     cv::Mat startImage;
     cv::Mat image;
     CommandGenerator cmdG;

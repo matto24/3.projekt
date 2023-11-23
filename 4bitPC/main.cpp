@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
             }
 
             keepPlaying = true;
-            usleep(300000); //tidligere usleep(1000000);
+            usleep(1000000); //tidligere usleep(1000000);
 
             if (lastKeyCount == 2)
             {
@@ -142,7 +142,7 @@ int main(int argc, char const *argv[])
                     shutdown = true;
                     std::cout << "Play Next" << std::endl;
                     m++;
-                    usleep(1000000);
+                    usleep(2000000);
                 }
             }
             if(std::chrono::high_resolution_clock::now()-start > std::chrono::seconds(5)){
