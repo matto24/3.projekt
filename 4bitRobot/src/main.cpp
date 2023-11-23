@@ -42,21 +42,22 @@ int main(int argc, char **argv)
 
     decoder.setStartBit(false);
     bool shutdown = false;
+    bool correctMessage = false;
 
     while (!shutdown)
     {
         if (fundneToner.size() > 5)
         {
             decoder.setStartBit(false);
-            mi.interpretMessage(fundneToner);
+            correctMessage = mi.interpretMessage(fundneToner);
             fundneToner.clear();
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
                 //robo.commands(mi.getDriveCommands());
-                
             }
-            
+
+            if(correctMessage){
             usleep(1500000);
             Pa_Initialize();
             PaStream *playStream;
@@ -87,6 +88,7 @@ int main(int argc, char **argv)
             Pa_StopStream(playStream);
             Pa_CloseStream(playStream);
             Pa_Terminate();
+            }
         }
 
         std::vector<float> buffer;

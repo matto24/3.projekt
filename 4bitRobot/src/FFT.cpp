@@ -58,8 +58,8 @@ double DTMFDecoder::calculateAverageOfLast10Medians(const std::vector<float>& au
     // Add the current median to the list of last 10 medians
     this->last10Medians.push_back(currentMedian);
 
-    // Keep only the last 10 medians
-    if (this->last10Medians.size() > 10) {
+    // Keep only the last 5 medians
+    if (this->last10Medians.size() > 5) {
         this->last10Medians.erase(this->last10Medians.begin());
     }
 
@@ -70,7 +70,7 @@ double DTMFDecoder::calculateAverageOfLast10Medians(const std::vector<float>& au
     }
 
     // Calculate the average including the current value and a baseline
-    double baseline = 5.0;  // Replace this with your desired baseline value
+    double baseline = 2.0;  // Replace this with your desired baseline value
     double average = (sum + currentValue + baseline) / (this->last10Medians.size() + 2);  // 2 to account for currentValue and baseline
 
     return average;
@@ -96,7 +96,7 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
         fftw_execute(plan);
 
         double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
-        std::cout << threshold << std::endl;
+        //std::cout << threshold << std::endl;
         double largestAmp1 = threshold;
         double largestAmp2 = threshold;
         double largestFreq1 = 0.0;

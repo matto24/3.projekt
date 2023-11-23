@@ -34,7 +34,7 @@ std::vector<std::pair<int, std::string>> MessageInterpreter::getDriveCommands(){
     return driveCommands;
 }
 
-void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) {
+bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) {
         //Create string of bits
     std::string bits;
     for (int i = 0; i < inputSekvens.size(); i++)
@@ -71,11 +71,15 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     // Checksum
     std::string checksumTarget = bits.substr(13, 3) + bits.substr(17, 3) + bits.substr(21, 3);
     int checksumIntTarget = stoi(checksumTarget, nullptr, 2);
-    int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(8, 8), nullptr, 2);
+    int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(4, 8), nullptr, 2);
 
-     //if (checksumIntCount != checksumIntTarget){
-     //    return; 
-     //}
+    std::cout << "checksum Target: " << checksumTarget << std::endl;
+    std::cout << "checksum Int Target: " << checksumIntTarget << std::endl;
+    std::cout << "checksum Int Count: " << checksumIntCount << std::endl;
+
+     if (checksumIntCount != checksumIntTarget){
+         return false; 
+     }
 
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
@@ -99,5 +103,7 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     default:
         break;
     }
+
+    return true;
 
 }
