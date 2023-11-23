@@ -11,7 +11,7 @@ public:
     CommandGenerator() {}
 
     std::string createCommand(int command, int data) {
-        // Convert decimal values to binary strings
+        
         std::bitset<2> cmdBin(command);
         std::string cmdB = cmdBin.to_string();
         std::bitset<8> dataBin(data);
