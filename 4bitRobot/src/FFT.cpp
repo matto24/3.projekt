@@ -75,6 +75,14 @@ double DTMFDecoder::calculateAverageOfLast10Medians(const std::vector<float>& au
     return average;
 }
 
+void DTMFDecoder::setStartBit(bool in){
+    startBit = in;
+}
+
+bool DTMFDecoder::getStartBit(){
+    return startBit;
+}
+
 int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate) 
 {
         int N = audioData.size();
@@ -123,7 +131,7 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
                 if (lastSound == detectedSound) {
                     return 0;
                 }
-                if (detectedSound == 2330){
+                if (detectedSound == 2277 && !startBit){
                     tempSound = lastSound;
                     lastSound = detectedSound;
                     return tempSound;

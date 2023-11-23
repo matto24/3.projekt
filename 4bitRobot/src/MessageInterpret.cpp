@@ -73,25 +73,28 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     int checksumIntTarget = stoi(checksumTarget, nullptr, 2);
     int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(8, 8), nullptr, 2);
 
-    if (checksumIntCount != checksumIntTarget){
-        return; 
-    }
+    // if (checksumIntCount != checksumIntTarget){
+    //     return; 
+    // }
 
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
-    
     switch (commandInt) 
     {
     case 0b01: //Command-code
+        std::cout << "drej til højre" << std::endl;
         driveCommands.push_back(std::make_pair(commandInt, data));
         break;
     case 0b10:
+        std::cout << "drej til venstre" << std::endl;
         driveCommands.push_back(std::make_pair(commandInt, data));
         break;
     case 0b11: //Command-code
+        std::cout << "Kør frem" << std::endl;
         driveCommands.push_back(std::make_pair(commandInt, data));
         break;
     case 0b00:
+        std::cout << "Execute" << std::endl;
         executeRoute = true;
     default:
         break;

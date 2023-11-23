@@ -20,21 +20,22 @@
                     
                     //std::cout << i << std::endl;
                     if(ad.second > 0){
-                        out.push_back(cmdG.createCommand(42,std::abs(ad.second * (180/M_PI))));
+                        out.push_back(cmdG.createCommand(1,std::abs(ad.second * (180/M_PI))));
                         //std::cout << "Drej til højre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(42,std::abs(ad.second * (180/M_PI))) << std::endl;
                     }
                     else if(ad.second < 0){
-                        out.push_back(cmdG.createCommand(46,std::abs(ad.second * (180/M_PI))));
+                        out.push_back(cmdG.createCommand(2,std::abs(ad.second * (180/M_PI))));
                         //std::cout << "Drej til venstre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(46,std::abs(ad.second * (180/M_PI))) << std::endl;
                     }
                     if(std::abs(ad.first) > 0){
-                        out.push_back(cmdG.createCommand(62,std::abs(ad.first)));
+                        out.push_back(cmdG.createCommand(3,std::abs(ad.first)));
                         //std::cout << "Kør frem i: " << std::abs(ad.first) << " pixel -> " << cmdG.createCommand(62,std::abs(ad.first)) << std::endl;
                     }
                 }
                 if(out.size() > 0){
                     cv::destroyAllWindows();
                     saveFinalRoute();
+                    out.push_back(cmdG.createCommand(0,0));
                     return out;
                 }
             }

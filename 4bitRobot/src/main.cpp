@@ -9,7 +9,7 @@
 #include "playAudio.h"
 
 // #include "rb3_cpp_publisher.h"
-// #include "drive.h"
+#include "drive.h"
 #include <unistd.h>
 
 const int sampleRate = 8000;
@@ -22,13 +22,12 @@ volatile bool keepPlaying = false;
 
 int main(int argc, char **argv)
 {
-    /*
-    rclcpp::init(argc, argv);
-    auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(rb3_publisher);
+   // rclcpp::init(argc, argv);
+   // auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
+   // rclcpp::executors::SingleThreadedExecutor executor;
+   // executor.add_node(rb3_publisher);
 
-    Drive robo(rb3_publisher); */
+    // Drive robo(rb3_publisher);
 
     DTMFDecoder decoder(1600);
     MessageInterpreter mi;
@@ -41,23 +40,24 @@ int main(int argc, char **argv)
     int result;
     std::vector<int> fundneToner;
 
-    bool startBit = false;
+    decoder.setStartBit(false);
     bool shutdown = false;
 
     while (!shutdown)
     {
         if (fundneToner.size() > 5)
         {
-            startBit = false;
+            decoder.setStartBit(false);
             mi.interpretMessage(fundneToner);
             fundneToner.clear();
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
-                // robo.commands(mi.getDriveCommands);
+                //robo.commands(mi.getDriveCommands());
+                
             }
             
-            usleep(500000);
+            usleep(1500000);
             Pa_Initialize();
             PaStream *playStream;
             Pa_OpenDefaultStream(&playStream, 0, 1, paFloat32, 44100, 4096, NULL, NULL);
@@ -98,22 +98,22 @@ int main(int argc, char **argv)
             std::cout << result << std::endl;
         }
 
-        if (result == 2277 && !startBit) // tonen 0 og startbit = false
+        if (result == 2277 && !decoder.getStartBit()) // tonen 0 og startbit = false
         {
-            startBit = true;
+            decoder.setStartBit(true);
             fundneToner.clear();
             std::cout << "start" << std::endl;
             continue;
         }
 
-        if (startBit && result != 0)
+        if (decoder.getStartBit() && result != 0)
         {
             fundneToner.push_back(result);
             continue;
         }
     }
 
-    // rclcpp::shutdown();
+    //rclcpp::shutdown();
     return 0;
 }
 
