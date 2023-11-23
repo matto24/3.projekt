@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <fftw3.h>
+#include <algorithm>
 
 class DTMFDecoder {
 private:
@@ -14,10 +15,12 @@ private:
     std::vector<double> in;
     std::vector<fftw_complex> out;
     fftw_plan plan;
+    double calculateMedian(const std::vector<float>& vec);
+    std::vector<double> last10Medians;
 
 public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
-    double calculateAverage(const std::vector<float>& vec);
+    double calculateAverageOfLast10Medians(const std::vector<float>& audioData);
     int FFT(const std::vector<float>& audioData, double sampleRate);
 };
