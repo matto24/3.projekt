@@ -12,6 +12,7 @@ DTMFDecoder::DTMFDecoder(int N) : DTMF1({697.5, 770, 852, 941}),    // HUSK NU F
                                   DTMF2({1209.5, 1336, 1477, 1633}), 
                                   lastSound(0), tempSound(0), in(N), out(N / 2 + 1) {
     plan = fftw_plan_dft_r2c_1d(N, in.data(), out.data(), FFTW_ESTIMATE);
+    startBit = false;
 }
 
 DTMFDecoder::~DTMFDecoder() {
@@ -131,7 +132,7 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
                 if (lastSound == detectedSound) {
                     return 0;
                 }
-                if (detectedSound == 2277 && !startBit){
+                if (detectedSound == 2277 && startBit){
                     tempSound = lastSound;
                     lastSound = detectedSound;
                     return tempSound;

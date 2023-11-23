@@ -73,9 +73,9 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     int checksumIntTarget = stoi(checksumTarget, nullptr, 2);
     int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(8, 8), nullptr, 2);
 
-    // if (checksumIntCount != checksumIntTarget){
-    //     return; 
-    // }
+     //if (checksumIntCount != checksumIntTarget){
+     //    return; 
+     //}
 
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
