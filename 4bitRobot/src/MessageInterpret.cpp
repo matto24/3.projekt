@@ -6,7 +6,7 @@ MessageInterpreter::MessageInterpreter(){
     executeRoute = false;
     toneToBitMap = {
     {2277, "0000"}, //0
-    {1907, "0001"}, //1
+    {1906, "0001"}, //1
     {2033, "0010"}, //2
     {2174, "0011"}, //3
     {1979, "0100"}, //4
@@ -34,7 +34,7 @@ std::vector<std::pair<int, std::string>> MessageInterpreter::getDriveCommands(){
     return driveCommands;
 }
 
-void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) {
+bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) {
         //Create string of bits
     std::string bits;
     for (int i = 0; i < inputSekvens.size(); i++)
@@ -71,11 +71,15 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     // Checksum
     std::string checksumTarget = bits.substr(13, 3) + bits.substr(17, 3) + bits.substr(21, 3);
     int checksumIntTarget = stoi(checksumTarget, nullptr, 2);
-    int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(8, 8), nullptr, 2);
+    int checksumIntCount = stoi(bits.substr(0, 4), nullptr, 2) + stoi(bits.substr(4, 8), nullptr, 2);
 
-    // if (checksumIntCount != checksumIntTarget){
-    //     return; 
-    // }
+
+    if (checksumIntCount != checksumIntTarget){
+         std::cout << "Forkert checksum" << std::endl;
+         return false; 
+     } else {
+        std::cout << "rigtig checksum" << std::endl;
+     }
 
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
@@ -99,5 +103,7 @@ void MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     default:
         break;
     }
+
+    return true;
 
 }

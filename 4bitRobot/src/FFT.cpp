@@ -5,30 +5,73 @@
 #include <cmath>
 #include <fftw3.h>
 #include <array>
+#include <algorithm>
 
 
-DTMFDecoder::DTMFDecoder(int N) : DTMF1({697.5, 770, 852, 941}),    // HUSK NU FOR GUDS SKYLD AT ÆNDRE ALLE TAL ALA 697.5
-                                  DTMF2({1209.5, 1336, 1477, 1633}), 
+DTMFDecoder::DTMFDecoder(int N) : DTMF1({697, 770, 852, 941}),    // HUSK NU FOR GUDS SKYLD AT ÆNDRE ALLE TAL ALA 697.5
+                                  DTMF2({1209, 1336, 1477, 1633}), 
                                   lastSound(0), tempSound(0), in(N), out(N / 2 + 1) {
     plan = fftw_plan_dft_r2c_1d(N, in.data(), out.data(), FFTW_ESTIMATE);
+    startBit = false;
 }
 
 DTMFDecoder::~DTMFDecoder() {
         fftw_destroy_plan(plan);
     }
 
-double DTMFDecoder::calculateAverage(const std::vector<float>& vec) {
+
+// Implement the calculateMedian function
+double DTMFDecoder::calculateMedian(const std::vector<float>& vec) {
     if (vec.empty()) {
-        std::cerr << "Error: Cannot calculate average of an empty vector." << std::endl;
+        std::cerr << "Error: Cannot calculate median of an empty vector." << std::endl;
         return 0.0;
     }
 
-    int sum = 0;
-    for (float element : vec) {
-        sum += element;
+    // Sort the vector
+    std::vector<float> sortedVec = vec;
+    std::sort(sortedVec.begin(), sortedVec.end());
+
+    // Calculate the median
+    size_t size = sortedVec.size();
+    size_t middle = size / 2;
+
+    if (size % 2 == 0) {
+        // If the size is even, take the average of the two middle elements
+        return static_cast<double>(sortedVec[middle - 1] + sortedVec[middle]) / 2.0;
+    } else {
+        // If the size is odd, return the middle element
+        return static_cast<double>(sortedVec[middle]);
+    }
+}
+
+
+double DTMFDecoder::calculateAverageOfLast10Medians(const std::vector<float>& audioData) {
+    // Calculate the current median
+    double currentMedian = calculateMedian(audioData);
+
+    // Determine the current sound level (maximum value in audioData)
+    float maxSoundLevel = *std::max_element(audioData.begin(), audioData.end());
+
+    // Update the currentValue based on the sound level
+    double currentValue = maxSoundLevel;  // You can apply any scaling or transformation here
+
+    // Add the current median to the list of last 10 medians
+    this->last10Medians.push_back(currentMedian);
+
+    // Keep only the last 5 medians
+    if (this->last10Medians.size() > 5) {
+        this->last10Medians.erase(this->last10Medians.begin());
     }
 
-    double average = static_cast<double>(sum) / vec.size();
+    // Calculate the average of the last 10 medians
+    double sum = 0.0;
+    for (double median : this->last10Medians) {
+        sum += median;
+    }
+
+    // Calculate the average including the current value and a baseline
+    double baseline = 2.0;  // Replace this with your desired baseline value
+    double average = (sum + currentValue + baseline) / (this->last10Medians.size() + 2);  // 2 to account for currentValue and baseline
 
     return average;
 }
@@ -44,16 +87,13 @@ bool DTMFDecoder::getStartBit(){
 int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate) 
 {
         int N = audioData.size();
-        //std::cout << N << std::endl;
-
         // Copy the audio data to the input buffer
         std::copy(audioData.begin(), audioData.end(), in.begin()); //Måske lige gyldigt at kopiere til in når det ikk er FFTW Allocate?
 
         // Execute the FFT plan
         fftw_execute(plan);
-
-        //double threshold = calculateAverage(audioData)+100; // LAV NOGET FEDT TIL THRESHOLD
-        double threshold = 30;
+        double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
+        
         double largestAmp1 = threshold;
         double largestAmp2 = threshold;
         double largestFreq1 = 0.0;
@@ -89,7 +129,7 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
                 if (lastSound == detectedSound) {
                     return 0;
                 }
-                if (detectedSound == 2277 && !startBit){
+                if (detectedSound == 2277 && startBit){
                     tempSound = lastSound;
                     lastSound = detectedSound;
                     return tempSound;
