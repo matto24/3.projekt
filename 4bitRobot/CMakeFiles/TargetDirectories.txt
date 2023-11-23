@@ -1,7 +1,0 @@
-/home/mads/Documents/3.projekt/4bitRobot/CMakeFiles/rb3_node_cpp.dir
-/home/mads/Documents/3.projekt/4bitRobot/CMakeFiles/edit_cache.dir
-/home/mads/Documents/3.projekt/4bitRobot/CMakeFiles/rebuild_cache.dir
-/home/mads/Documents/3.projekt/4bitRobot/CMakeFiles/list_install_components.dir
-/home/mads/Documents/3.projekt/4bitRobot/CMakeFiles/install.dir
-/home/mads/Documents/3.projekt/4bitRobot/CMakeFiles/install/local.dir
-/home/mads/Documents/3.projekt/4bitRobot/CMakeFiles/install/strip.dir
