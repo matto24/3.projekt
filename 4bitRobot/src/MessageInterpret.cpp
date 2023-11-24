@@ -4,6 +4,7 @@
 MessageInterpreter::MessageInterpreter(){
     // Initialize the toneToBitMap
     executeRoute = false;
+    lastBits = "hej";
     toneToBitMap = {
     {2277, "0000"}, //0
     {1906, "0001"}, //1
@@ -80,6 +81,13 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
      } else {
         std::cout << "rigtig checksum" << std::endl;
      }
+     
+
+     if(bits==lastBits) {
+        return true;
+     }
+
+    lastBits = bits;
 
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);

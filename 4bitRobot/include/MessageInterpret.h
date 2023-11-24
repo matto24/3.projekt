@@ -17,6 +17,7 @@ private:
     std::map<int, std::string> toneToBitMap;
     std::vector<std::pair<int, std::string>> driveCommands;
     bool executeRoute;
+    std::string lastBits;
     volatile char selectedKey = '\0';
     volatile bool keepPlaying = false;
 };

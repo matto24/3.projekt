@@ -8,7 +8,7 @@
 #include "PortAudioClass.h"
 #include "playAudio.h"
 
-// #include "rb3_cpp_publisher.h"
+//#include "rb3_cpp_publisher.h"
 #include "drive.h"
 #include <unistd.h>
 
@@ -22,12 +22,11 @@ volatile bool keepPlaying = false;
 
 int main(int argc, char **argv)
 {
-   // rclcpp::init(argc, argv);
-   // auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
-   // rclcpp::executors::SingleThreadedExecutor executor;
-   // executor.add_node(rb3_publisher);
-
-    // Drive robo(rb3_publisher);
+   //rclcpp::init(argc, argv);
+   //auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
+   //rclcpp::executors::SingleThreadedExecutor executor;
+   //executor.add_node(rb3_publisher);
+   //Drive robo(rb3_publisher);
 
     DTMFDecoder decoder(1600);
     MessageInterpreter mi;
@@ -51,11 +50,6 @@ int main(int argc, char **argv)
             decoder.setStartBit(false);
             correctMessage = mi.interpretMessage(fundneToner);
             fundneToner.clear();
-            if (mi.getExecuteRoute())
-            {
-                shutdown = true;
-                //robo.commands(mi.getDriveCommands());
-            }
 
             if(correctMessage){
             usleep(1500000);
@@ -88,6 +82,11 @@ int main(int argc, char **argv)
             Pa_StopStream(playStream);
             Pa_CloseStream(playStream);
             Pa_Terminate();
+            }
+            if (mi.getExecuteRoute())
+            {
+                shutdown = true;
+                //robo.commands(mi.getDriveCommands());
             }
         }
 
