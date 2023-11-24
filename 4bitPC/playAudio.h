@@ -3,6 +3,7 @@
 #include <string>
 #include <portaudio.h>
 #include <mutex>
+#include <atomic>
 
 struct ThreadArgs {
     PaStream* stream;

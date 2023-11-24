@@ -19,7 +19,6 @@ DTMFDecoder::~DTMFDecoder() {
         fftw_destroy_plan(plan);
     }
 
-
 // Implement the calculateMedian function
 double DTMFDecoder::calculateMedian(const std::vector<float>& vec) {
     if (vec.empty()) {
@@ -92,7 +91,8 @@ int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate)
 
         // Execute the FFT plan
         fftw_execute(plan);
-        double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
+        double threshold = 30;
+        //double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
         
         double largestAmp1 = threshold;
         double largestAmp2 = threshold;

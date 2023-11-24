@@ -1,17 +1,13 @@
 #include "RouteUI.h"
 #include "cmath"
 
-
-
     std::vector<std::string> RouteUI::run() {
     std::vector<std::string> out;
         while (true) {
-            
             cv::imshow("Route UI", image);
             char key = cv::waitKey(10);
             if(key == 32) {
                 clearScreen();
-
             }
 
             if(key==13){
@@ -46,7 +42,6 @@
                     updateImage();
                 }
             }
-
             if (key == 27)  // Exit on Esc key press
                 break;
         }
@@ -89,8 +84,7 @@
 
             if (i + 1 < circles.size()) {
                 drawLine(circles[i].first, circles[i + 1].first);
-                }
-                
+                } 
         }
     }
 
@@ -107,7 +101,6 @@
         cv::imwrite("FinalRoute.jpg", image);
         
     }
-
 
     void RouteUI::clearScreen(){
         //image = cv::Mat::ones(800, 800, CV_8U)*255;
