@@ -2,23 +2,21 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <unistd.h> //usleep
+#include <chrono>
 
 #include "MessageInterpret.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
-#include "playAudio.h"
+// #include "playAudio.h"
 
 // #include "rb3_cpp_publisher.h"
 #include "drive.h"
-#include <unistd.h>
 
 const int sampleRate = 32000;
 const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
 const int framesPrBuffer = 1600;
 const int numChannels = 1;
-
-volatile char selectedKey = '\0';
-volatile bool keepPlaying = false;
 
 int main(int argc, char **argv)
 {
@@ -33,7 +31,7 @@ int main(int argc, char **argv)
 
     PortAudioClass pa;
     pa.Initialize();
-    pa.OpenStream(sampleRate, framesPrBuffer, numChannels);
+    pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
     pa.StartStream();
 
     int result;
@@ -53,43 +51,23 @@ int main(int argc, char **argv)
 
             if (correctMessage)
             {
-                // Venter 500ms før vi sender en ack
                 usleep(500000);
-                Pa_Initialize();
-                PaStream *playStream;
-                Pa_OpenDefaultStream(&playStream, 0, 1, paFloat32, 44100, 4096, NULL, NULL);
-                Pa_StartStream(playStream);
-                pthread_t audioThreadId;
-                // Instans a PlayAudio klassen
-                PlayAudio audioPlayer;
-                // Instans a struct der holder threadArgs.
-                ThreadArgs threadArgs;
-                threadArgs.stream = playStream;
-                threadArgs.selectedKey = &selectedKey;
-                threadArgs.keepPlaying = &keepPlaying;
 
-                pthread_create(&audioThreadId, NULL, &PlayAudio::audioThread, (void *)&threadArgs);
-                std::string acknowledgement = "1";
-                std::cout << "Der afspilles ack" << std::endl;
+                pa.OpenOutputStream(44100, 4096, 1); // Open for playing
+                pa.StartStream();
 
-                for (char key : acknowledgement)
-                {
-                    usleep(500000);
-                    selectedKey = key;
-                    keepPlaying = true;
-                    usleep(1000000);
-                }
-                keepPlaying = false; // Ensure playback stops on exit
-                ThreadArgs().stop = true;
-                Pa_StopStream(playStream);
-                Pa_CloseStream(playStream);
-                Pa_Terminate();
+                // Play the acknowledgment tone (example: 440 Hz for 1 second)
+                pa.PlayTone(697, 1209, 1.0); // You need to convert "1" to the corresponding DTMF tone
+
+                pa.StopStream();
             }
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
                 // robo.commands(mi.getDriveComm62ands());
             }
+            pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
+            pa.StartStream();
         }
 
         std::vector<float> buffer;
