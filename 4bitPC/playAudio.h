@@ -18,7 +18,7 @@ class PlayAudio {
 #define SAMPLE_RATE 44100
 #define PI 3.14159265358979323846
 #define AMPLITUDE 0.5
-#define TONE_DURATION 0.2
+#define TONE_DURATION 0.1
 //tidligere #define TONE_DURATION 0.1
 
 

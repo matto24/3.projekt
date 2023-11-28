@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
     RouteUI ui;
     std::vector<std::string> moves = ui.run();
 
-    for (int m = 0; m< moves.size();)
+    for (int m = 0; m < moves.size();)
     {
         Pa_Initialize();
         PaStream *playStream;
@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
             }
 
             keepPlaying = true;
-            usleep(1000000); //tidligere usleep(1000000);
+            usleep(140000); // tidligere usleep(1000000);
 
             if (lastKeyCount == 2)
             {
@@ -90,18 +90,14 @@ int main(int argc, char const *argv[])
         }
 
         keepPlaying = false; // Ensure playback stops on exit
-        
+
         ThreadArgs().stop = true;
-        
+
         // Venter på at lyd tråden er færdig med at spille
-        
 
         Pa_StopStream(playStream);
         Pa_CloseStream(playStream);
         Pa_Terminate();
-
-        
-
 
         // Optag nu
 
@@ -118,7 +114,7 @@ int main(int argc, char const *argv[])
         std::vector<double> ringBuffer(ringBufferSize, 0.0);
         size_t ringBufferIndex = 0;
         std::vector<int> fundneToner;
-        
+
         auto start = std::chrono::high_resolution_clock::now();
 
         while (!shutdown)
@@ -135,17 +131,21 @@ int main(int argc, char const *argv[])
             if (ringBufferIndex == 0)
             {
                 result = decoder.FFT(ringBuffer, sampleRate);
-                std::cout << "result " << result << std::endl;
+                if (result != 0)
+                {
+                    std::cout << "result " << result << std::endl;
+                }
                 // Tone 1
                 if (result == 1907)
                 {
                     shutdown = true;
                     std::cout << "Play Next" << std::endl;
                     m++;
-                    usleep(2000000);
+                    usleep(1400000);
                 }
             }
-            if(std::chrono::high_resolution_clock::now()-start > std::chrono::seconds(5)){
+            if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(3))
+            {
                 std::cout << "Play again" << std::endl;
                 shutdown = true;
                 usleep(1000000);
@@ -153,8 +153,6 @@ int main(int argc, char const *argv[])
         }
         shutdown = false;
         pa.StopStream();
-        
-        
     }
 
     return 0;

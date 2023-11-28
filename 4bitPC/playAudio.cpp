@@ -101,6 +101,7 @@ void PlayAudio::generateDTMFTone(char key, float *buffer, int frames)
     {
         double freq1 = dtmfFrequencies[0][row];
         double freq2 = dtmfFrequencies[1][col];
+        std::cout << "Tone afspillet: " <<  freq1 + freq2 << std::endl;
 
         for (int i = 0; i < frames; i++)
         {
