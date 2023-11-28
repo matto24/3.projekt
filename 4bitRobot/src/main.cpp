@@ -43,6 +43,8 @@ int main(int argc, char **argv)
     bool shutdown = false;
     bool correctMessage = false;
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     while (!shutdown)
     {
         if (fundneToner.size() > 5)
@@ -53,6 +55,7 @@ int main(int argc, char **argv)
 
             if (correctMessage)
             {
+                start = std::chrono::high_resolution_clock::now();
                 // Venter 500ms før vi sender en ack
                 usleep(500000);
                 Pa_Initialize();
@@ -85,10 +88,19 @@ int main(int argc, char **argv)
                 Pa_CloseStream(playStream);
                 Pa_Terminate();
             }
+
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
                 // robo.commands(mi.getDriveComm62ands());
+            }
+        }
+        else{
+            if(std::chrono::high_resolution_clock::now()-start > std::chrono::seconds(2) && decoder.getStartBit()){
+                start = std::chrono::high_resolution_clock::now();
+                decoder.setStartBit(false);
+                fundneToner.clear();
+                std::cout << "Timer expired -> Cleared fundne Toner" << std::endl;
             }
         }
 
@@ -96,7 +108,7 @@ int main(int argc, char **argv)
         pa.ReadStream(buffer, framesPrBuffer);
         result = decoder.FFT(buffer, sampleRate);
 
-        if (result != 0)
+        if (result != 0 && result != 2277)
         {
             std::cout << result << std::endl;
         }
@@ -105,13 +117,17 @@ int main(int argc, char **argv)
         {
             decoder.setStartBit(true);
             fundneToner.clear();
-            std::cout << "start" << std::endl;
+            start = std::chrono::high_resolution_clock::now();
+            std::cout << "Start" << std::endl;
             continue;
         }
 
-        if (decoder.getStartBit() && result != 0)
+        else if (decoder.getStartBit() && result != 0)
         {
             fundneToner.push_back(result);
+            std::chrono::high_resolution_clock::now();
+
+
             continue;
         }
     }
