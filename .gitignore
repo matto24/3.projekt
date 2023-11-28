@@ -12,6 +12,12 @@ main
 *.dir
 *.log
 *.marks
+*.txt
+*.bin
+CMakeCCompilerId.c
+CMakeCXXCompilerId.cpp
+Makefile2
+cmake.check_cache
 /build/   # Ignore the 'build' directory
 /bin/     # Ignore the 'bin' directory
 4bitRobot/CMakeFiles/ #Ignore cmake files
