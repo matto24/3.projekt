@@ -61,7 +61,7 @@ int main(int argc, char **argv)
                 pa.StartStream();
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
-                pa.PlayTone(697, 1209, 1.0); 
+                pa.PlayTone(697, 1209, 1.0);
 
                 pa.StopStream();
             }
@@ -74,15 +74,14 @@ int main(int argc, char **argv)
             pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
             pa.StartStream();
         }
-        else{
-            if(std::chrono::high_resolution_clock::now()-start > std::chrono::seconds(2) && decoder.getStartBit()){
-                start = std::chrono::high_resolution_clock::now();
-                decoder.setStartBit(false);
-                fundneToner.clear();
-                std::cout << "Timer expired -> Cleared fundne Toner" << std::endl;
-            }
+        else if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(2) && decoder.getStartBit())
+        {
+            start = std::chrono::high_resolution_clock::now();
+            decoder.setStartBit(false);
+            fundneToner.clear();
+            decoder.clearLastSound();
+            std::cout << "Timer expired -> Cleared fundne Toner" << std::endl;
         }
-        
 
         std::vector<float> buffer;
         pa.ReadStream(buffer, framesPrBuffer);
@@ -105,8 +104,7 @@ int main(int argc, char **argv)
         else if (decoder.getStartBit() && result != 0)
         {
             fundneToner.push_back(result);
-            std::chrono::high_resolution_clock::now();
-
+            start = std::chrono::high_resolution_clock::now();
 
             continue;
         }

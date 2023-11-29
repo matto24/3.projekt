@@ -83,6 +83,10 @@ bool DTMFDecoder::getStartBit(){
     return startBit;
 }
 
+void DTMFDecoder::clearLastSound(){
+    lastSound = 0;
+}
+
 int DTMFDecoder::FFT(const std::vector<float>& audioData, double sampleRate) 
 {
         int N = audioData.size();

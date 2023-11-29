@@ -26,4 +26,5 @@ public:
     int FFT(const std::vector<float>& audioData, double sampleRate);
     void setStartBit(bool in);
     bool getStartBit();
+    void clearLastSound();
 };
