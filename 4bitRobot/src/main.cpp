@@ -48,6 +48,7 @@ int main(int argc, char **argv)
         if (fundneToner.size() > 5)
         {
             decoder.setStartBit(false);
+            decoder.clearLastSound();
             correctMessage = mi.interpretMessage(fundneToner);
             fundneToner.clear();
 
