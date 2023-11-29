@@ -60,8 +60,8 @@ int main(int argc, char **argv)
                 pa.OpenOutputStream(44100, 4096, 1); // Open for playing
                 pa.StartStream();
 
-                // Play the acknowledgment tone (example: 440 Hz for 1 second)
-                pa.PlayTone(697, 1209, 1.0); // You need to convert "1" to the corresponding DTMF tone
+                // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
+                pa.PlayTone(697, 1209, 1.0); 
 
                 pa.StopStream();
             }
