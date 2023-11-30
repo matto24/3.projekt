@@ -9,6 +9,7 @@
 #include <bits/stdc++.h>
 #include <thread>
 #include <mutex>
+#include <chrono>
 
 #include "playAudio.h"
 #include "FFT.h"
@@ -33,80 +34,80 @@ int main(int argc, char const *argv[])
 
     RouteUI ui;
     std::vector<std::string> moves = ui.run();
+    
 
     for (int m = 0; m < moves.size();)
     {
-        Pa_Initialize();
-        PaStream *playStream;
-
-        Pa_OpenDefaultStream(&playStream, 0, 1, paFloat32, SAMPLE_RATE, 4096, NULL, NULL);
-        Pa_StartStream(playStream);
-        pthread_t audioThreadId;
-
+        
         // Instans a PlayAudio klassen
         PlayAudio audioPlayer;
-        // Instans a struct der holder threadArgs.
-        ThreadArgs threadArgs;
-
-        threadArgs.stream = playStream;
-        threadArgs.selectedKey = &selectedKey;
-        threadArgs.keepPlaying = &keepPlaying;
-
-        pthread_create(&audioThreadId, NULL, &PlayAudio::audioThread, (void *)&threadArgs);
+       
+        PortAudioClass pa;
+        pa.Initialize();
+        
+        
 
         std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
         char lastKey = '\0';
         int lastKeyCount = 0;
-
+        pa.OpenOutputStream(44100, 4096, 1); // Open for playing
+        pa.StartStream();
+        
+        //while(1){
+        //    pa.PlayTone('0', 100, 100);
+        //}
+        
         for (char key : conversion)
         {
+            //std::cout << key << std::endl;
             if (key == lastKey)
             {
                 lastKeyCount++;
                 if (lastKeyCount == 2)
                 {
-                    selectedKey = '0';
+                    pa.PlayTone('0', 100, 200);
+                    
+
                 }
                 else
                 {
-                    selectedKey = key;
+                    pa.PlayTone(key, 100,200);
+                    
+
                 }
             }
             else
             {
                 lastKey = key;
                 lastKeyCount = 1;
-                selectedKey = key;
-            }
+                
 
-            keepPlaying = true;
-            usleep(140000); // tidligere usleep(1000000);
+                // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
+                auto test = std::chrono::high_resolution_clock::now();
+                pa.PlayTone(key, 100,200);
+                std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - test).count() << std::endl;
+            }
 
             if (lastKeyCount == 2)
             {
                 lastKey = key;
             }
         }
+        
 
-        keepPlaying = false; // Ensure playback stops on exit
-
-        ThreadArgs().stop = true;
+       pa.StopStream();
 
         // Venter på at lyd tråden er færdig med at spille
 
-        Pa_StopStream(playStream);
-        Pa_CloseStream(playStream);
-        Pa_Terminate();
+        
 
         // Optag nu
 
         int result;
         DTMFDecoder decoder(1600);
 
-        PortAudioClass pa;
-        pa.Initialize();
-        pa.OpenStream(8000, framesPrBuffer, numChannels);
+        
         // Start recording stream
         pa.StartStream();
 
@@ -120,6 +121,8 @@ int main(int argc, char const *argv[])
         while (!shutdown)
         {
             std::vector<float> buffer;
+            pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
+            pa.StartStream();
             pa.ReadStream(buffer, framesPrBuffer);
             // Copy into ring buffer
             for (int i = 0; i < framesPrBuffer; ++i)
@@ -144,7 +147,7 @@ int main(int argc, char const *argv[])
                     usleep(1400000);
                 }
             }
-            if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(3))
+            if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(3) && !shutdown)
             {
                 std::cout << "Play again" << std::endl;
                 shutdown = true;
@@ -157,3 +160,4 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+

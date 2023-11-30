@@ -2,6 +2,7 @@
 
 #include <portaudio.h>
 #include <vector>
+#include <cmath>
 
 class PortAudioClass {
 public:
@@ -9,13 +10,18 @@ public:
     ~PortAudioClass();
 
     void Initialize();
-    void OpenStream(int sampleRate, int framesPerBuffer, int numChannels);
+    void OpenInputStream(int sampleRate, int framesPerBuffer, int numChannels);
+    void OpenOutputStream(int sampleRate, int framesPerBuffer, int numChannels);
     void StartStream();
-    void ReadStream(std::vector<float>& buffer, int framesPerBuffer);
     void StopStream();
+    void ReadStream(std::vector<float>& buffer, int framesPerBuffer);
+    void PlayTone(char key, double duration,double sleeptime);
+    std::vector<double> keyToFrequencies(char key);
 
 private:
     PaStream *stream;
+    
+    void GenerateTone(std::vector<float>& buffer, double frequency1, double frequency2, double sampleRate, double duration);
     int sampleRate;
     int numChannels;
 };
