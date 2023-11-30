@@ -4,7 +4,7 @@
 #include <utility>
 #include <unistd.h> //usleep
 #include <chrono>
-
+#include <fstream>
 #include "MessageInterpret.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
@@ -13,9 +13,11 @@
 // #include "rb3_cpp_publisher.h"
 #include "drive.h"
 
+#define OUTPUT_FILE "output.csv"
+
 const int sampleRate = 32000;
 const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
-const int framesPrBuffer = 1600;
+const int framesPrBuffer = 1200;
 const int numChannels = 1;
 
 int main(int argc, char **argv)
@@ -104,6 +106,17 @@ int main(int argc, char **argv)
 
         else if (decoder.getStartBit() && result != 0)
         {
+            // std::ofstream outputFile(OUTPUT_FILE);
+            // for (size_t i = 0; i < buffer.size(); i++)
+            // {
+            //     outputFile << buffer[i];
+            //     if (i < buffer.size() - 1)
+            //     {
+            //         outputFile << ",";
+            //     }
+            // }
+            // outputFile.close();
+
             fundneToner.push_back(result);
             start = std::chrono::high_resolution_clock::now();
 

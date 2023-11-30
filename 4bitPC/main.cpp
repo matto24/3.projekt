@@ -79,10 +79,12 @@ int main(int argc, char const *argv[])
                 lastKeyCount = 1;
                 selectedKey = key;
             }
-
+            auto startTimeTest = std::chrono::high_resolution_clock::now();
             keepPlaying = true;
             usleep(140000); // tidligere usleep(1000000);
-
+            auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
+            auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
+            std::cout << "tid om at fylde buffer: " << elapsedTimeTest << std::endl;
             if (lastKeyCount == 2)
             {
                 lastKey = key;
@@ -141,7 +143,7 @@ int main(int argc, char const *argv[])
                     shutdown = true;
                     std::cout << "Play Next" << std::endl;
                     m++;
-                    usleep(1400000);
+                    usleep(1000000);
                 }
             }
             if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(3))
