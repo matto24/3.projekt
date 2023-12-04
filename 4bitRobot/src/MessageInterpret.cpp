@@ -6,24 +6,24 @@ MessageInterpreter::MessageInterpreter(){
     executeRoute = false;
     lastBits = "hej";
     toneToBitMap = {
-    {2277, "0000"}, //0
-    {1906, "0001"}, //1
-    {2033, "0010"}, //2
-    {2174, "0011"}, //3
-    {1979, "0100"}, //4
-    {2106, "0101"}, //5
-    {2247, "0110"}, //6
-    {2061, "0111"}, //7
-    {2188, "1000"}, //8
-    {2329, "1001"}, //9
+    {'0', "0000"}, //0
+    {'1', "0001"}, //1
+    {'2', "0010"}, //2
+    {'3', "0011"}, //3
+    {'4', "0100"}, //4
+    {'5', "0101"}, //5
+    {'6', "0110"}, //6
+    {'7', "0111"}, //7
+    {'8', "1000"}, //8
+    {'9', "1001"}, //9
     
-    {2330, "1010"}, //A
-    {2403, "1011"}, //B
-    {2485, "1100"}, //C
-    {2574, "1101"}, //D
+    {'A', "1010"}, //A
+    {'B', "1011"}, //B
+    {'C', "1100"}, //C
+    {'D', "1101"}, //D
 
-    {2150, "1110"}, //*
-    {2418, "1111"}, //#
+    {'*', "1110"}, //*
+    {'#', "1111"}, //#
     };
 }
 
@@ -35,7 +35,7 @@ std::vector<std::pair<int, std::string>> MessageInterpreter::getDriveCommands(){
     return driveCommands;
 }
 
-bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) {
+bool MessageInterpreter::interpretMessage(const std::vector<char>& inputSekvens) {
         //Create string of bits
     std::string bits;
     for (int i = 0; i < inputSekvens.size(); i++)

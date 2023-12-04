@@ -13,9 +13,9 @@
 // #include "rb3_cpp_publisher.h"
 #include "drive.h"
 
-const int sampleRate = 32000;
+const int sampleRate = 44000;
 const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
-const int framesPrBuffer = 1600;
+const int framesPrBuffer = 1850;
 const int numChannels = 1;
 
 int main(int argc, char **argv)
@@ -34,8 +34,8 @@ int main(int argc, char **argv)
     pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
     pa.StartStream();
 
-    int result;
-    std::vector<int> fundneToner;
+    char result;
+    std::vector<char> fundneToner;
 
     decoder.setStartBit(false);
     bool shutdown = false;
@@ -45,8 +45,13 @@ int main(int argc, char **argv)
 
     while (!shutdown)
     {
+        auto test1 = std::chrono::high_resolution_clock::now();
         if (fundneToner.size() > 5)
         {
+            for (auto pik : fundneToner){
+                std::cout << pik;
+            }
+            std::cout << std::endl;
             decoder.setStartBit(false);
             decoder.clearLastSound();
             correctMessage = mi.interpretMessage(fundneToner);
@@ -67,6 +72,7 @@ int main(int argc, char **argv)
                 pa.StopStream();
             }
 
+
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
@@ -79,6 +85,7 @@ int main(int argc, char **argv)
         {
             start = std::chrono::high_resolution_clock::now();
             decoder.setStartBit(false);
+            std::cout << "count" << fundneToner.size() << std::endl;
             fundneToner.clear();
             decoder.clearLastSound();
             std::cout << "Timer expired -> Cleared fundne Toner" << std::endl;
@@ -88,27 +95,30 @@ int main(int argc, char **argv)
         pa.ReadStream(buffer, framesPrBuffer);
         result = decoder.FFT(buffer, sampleRate);
 
-        if (result != 0 && result != 2277)
+        if (decoder.getStartBit() && result != 'x')
         {
-            std::cout << result << std::endl;
-        }
+            fundneToner.push_back(result);
+            usleep(50000);
+            start = std::chrono::high_resolution_clock::now();
 
-        if (result == 2277 && !decoder.getStartBit()) // tonen 0 og startbit = false
+            //continue;
+        }
+        if (result == '0' && !decoder.getStartBit()) // tonen 0 og startbit = false
         {
             decoder.setStartBit(true);
             fundneToner.clear();
             start = std::chrono::high_resolution_clock::now();
             std::cout << "Start" << std::endl;
-            continue;
+            //continue;
         }
-
-        else if (decoder.getStartBit() && result != 0)
+        if (result != 'x' && result != '0')
         {
-            fundneToner.push_back(result);
-            start = std::chrono::high_resolution_clock::now();
-
-            continue;
+            std::cout << result << std::endl;
         }
+
+        auto test2 = std::chrono::high_resolution_clock::now();
+        //std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(test2 - test1).count() << std::endl;
+
     }
 
     // rclcpp::shutdown();

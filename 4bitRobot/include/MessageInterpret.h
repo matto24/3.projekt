@@ -9,12 +9,12 @@
 class MessageInterpreter {
 public:
     MessageInterpreter();
-    bool interpretMessage(const std::vector<int>& inputSekvens);
+    bool interpretMessage(const std::vector<char>& inputSekvens);
     bool getExecuteRoute();
     std::vector<std::pair<int, std::string>> getDriveCommands();
 
 private:
-    std::map<int, std::string> toneToBitMap;
+    std::map<char, std::string> toneToBitMap;
     std::vector<std::pair<int, std::string>> driveCommands;
     bool executeRoute;
     std::string lastBits;

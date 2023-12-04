@@ -18,12 +18,13 @@ private:
     double calculateMedian(const std::vector<float>& vec);
     std::vector<double> last10Medians;
     bool startBit;
+    char lastTone;
 
 public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
     double calculateAverageOfLast10Medians(const std::vector<float>& audioData);
-    int FFT(const std::vector<float>& audioData, double sampleRate);
+    char FFT(const std::vector<float>& audioData, double sampleRate);
     void setStartBit(bool in);
     bool getStartBit();
     void clearLastSound();
