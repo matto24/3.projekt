@@ -38,7 +38,8 @@ int main(int argc, char const *argv[])
 
     for (int m = 0; m < moves.size();)
     {
-        
+        int toneDuration = 100;
+        int waitDuration = 40;
         // Instans a PlayAudio klassen
         PlayAudio audioPlayer;
        
@@ -66,13 +67,13 @@ int main(int argc, char const *argv[])
                 lastKeyCount++;
                 if (lastKeyCount == 2)
                 {
-                    pa.PlayTone('0', 100, 200);
+                    pa.PlayTone('0', toneDuration, waitDuration);
                     
 
                 }
                 else
                 {
-                    pa.PlayTone(key, 100,200);
+                    pa.PlayTone(key, toneDuration,waitDuration);
                     
 
                 }
@@ -85,7 +86,7 @@ int main(int argc, char const *argv[])
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
                 auto test = std::chrono::high_resolution_clock::now();
-                pa.PlayTone(key, 100,200);
+                pa.PlayTone(key, toneDuration,waitDuration);
                 std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - test).count() << std::endl;
             }
 
