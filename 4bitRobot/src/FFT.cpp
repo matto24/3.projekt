@@ -106,13 +106,62 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
 
     // Execute the FFT plan
     fftw_execute(plan);
-    double threshold = 60;
+    double threshold = 260;
     // double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
     double largestAmp1 = threshold;
     double largestAmp2 = threshold;
     double largestFreq1 = 0.0;
     double largestFreq2 = 0.0;
     int detectedSound = 0;
+
+    // Function to check if a frequency is within the range of a target frequency
+    auto isFrequencyInRange = [](double target, double actual, double tolerance)
+    {
+        return std::abs(target - actual) <= tolerance;
+    };
+
+    // Adjusted detection logic
+    for (int i = 0; i <= N / 2; ++i)
+    {
+        double freq = i * sampleRate / N;
+        double amp = std::sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
+
+        for (double targetFreq : DTMF1)
+        {
+            if (isFrequencyInRange(targetFreq, freq, 25.0) && amp > largestAmp1)
+            {
+                largestAmp1 = amp;
+                largestFreq1 = targetFreq; // Use the target frequency, not the actual
+            }
+        }
+
+        for (double targetFreq : DTMF2)
+        {
+            if (isFrequencyInRange(targetFreq, freq, 25.0) && amp > largestAmp2)
+            {
+                largestAmp2 = amp;
+                largestFreq2 = targetFreq; // Use the target frequency, not the actual
+            }
+        }
+    }
+    if (largestFreq2 != 0 && largestFreq1 != 0)
+    {
+        detectedSound = static_cast<int>(largestFreq1 + largestFreq2);
+
+        if (lastSound == detectedSound)
+        {
+            return 0;
+        }
+        if (detectedSound == 2277 && startBit)
+        {
+            tempSound = lastSound;
+            lastSound = detectedSound;
+            return tempSound;
+        }
+        lastSound = detectedSound;
+        return detectedSound;
+    }
+    return 0;
 
     // Find the largest frequency in the first DTMF group
     for (double freq : DTMF1)
