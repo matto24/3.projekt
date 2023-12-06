@@ -21,7 +21,7 @@ public:
 private:
     PaStream *stream;
     
-    void GenerateTone(std::vector<float>& buffer, double frequency1, double frequency2, double sampleRate, double duration);
+    void GenerateTone(std::vector<float>& buffer, double frequency1, double frequency2, double sampleRate, double playDuration, double sleepDuration);
     int sampleRate;
     int numChannels;
 };

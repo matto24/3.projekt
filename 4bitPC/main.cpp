@@ -31,22 +31,16 @@ const int numChannels = 1;
 
 int main(int argc, char const *argv[])
 {
-
     RouteUI ui;
     std::vector<std::string> moves = ui.run();
-    
+    PortAudioClass pa;
+    pa.Initialize();
+    PlayAudio audioPlayer;
 
     for (int m = 0; m < moves.size();)
     {
-        int toneDuration = 100;
+        int toneDuration = 60;
         int waitDuration = 40;
-        // Instans a PlayAudio klassen
-        PlayAudio audioPlayer;
-       
-        PortAudioClass pa;
-        pa.Initialize();
-        
-        
 
         std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
@@ -54,39 +48,32 @@ int main(int argc, char const *argv[])
         int lastKeyCount = 0;
         pa.OpenOutputStream(44100, 4096, 1); // Open for playing
         pa.StartStream();
-        
-        //while(1){
-        //    pa.PlayTone('0', 100, 100);
-        //}
-        
+
         for (char key : conversion)
         {
-            //std::cout << key << std::endl;
+            // std::cout << key << std::endl;
             if (key == lastKey)
             {
                 lastKeyCount++;
                 if (lastKeyCount == 2)
                 {
                     pa.PlayTone('0', toneDuration, waitDuration);
-                    
-
                 }
                 else
                 {
-                    pa.PlayTone(key, toneDuration,waitDuration);
-                    
-
+                    pa.PlayTone(key, toneDuration, waitDuration);   
                 }
+                //usleep(waitDuration*1000);
             }
             else
             {
                 lastKey = key;
                 lastKeyCount = 1;
-                
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
                 auto test = std::chrono::high_resolution_clock::now();
-                pa.PlayTone(key, toneDuration,waitDuration);
+                pa.PlayTone(key, toneDuration, waitDuration);
+                //usleep(waitDuration*1000);
                 std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - test).count() << std::endl;
             }
 
@@ -95,22 +82,15 @@ int main(int argc, char const *argv[])
                 lastKey = key;
             }
         }
-        
 
-       pa.StopStream();
+        pa.StopStream();
 
         // Venter på at lyd tråden er færdig med at spille
-
-        
 
         // Optag nu
 
         int result;
         DTMFDecoder decoder(1600);
-
-        
-        // Start recording stream
-        pa.StartStream();
 
         const size_t ringBufferSize = sampleRate * recordingDurationSeconds;
         std::vector<double> ringBuffer(ringBufferSize, 0.0);
@@ -118,12 +98,12 @@ int main(int argc, char const *argv[])
         std::vector<int> fundneToner;
 
         auto start = std::chrono::high_resolution_clock::now();
+        pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
+        pa.StartStream();
 
         while (!shutdown)
         {
             std::vector<float> buffer;
-            pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
-            pa.StartStream();
             pa.ReadStream(buffer, framesPrBuffer);
             // Copy into ring buffer
             for (int i = 0; i < framesPrBuffer; ++i)
@@ -161,4 +141,3 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
-
