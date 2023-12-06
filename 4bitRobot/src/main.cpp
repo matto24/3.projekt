@@ -8,16 +8,14 @@
 #include "MessageInterpret.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
-// #include "playAudio.h"
-
-// #include "rb3_cpp_publisher.h"
+#include "rb3_cpp_publisher.h"
 #include "drive.h"
 
 #define OUTPUT_FILE "output.csv"
 
-const int sampleRate = 32000;
+const int sampleRate = 44100;
 const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
-const int framesPrBuffer = 1200;
+const int framesPrBuffer = 1850;
 const int numChannels = 1;
 
 int main(int argc, char **argv)
@@ -56,6 +54,7 @@ int main(int argc, char **argv)
 
             if (correctMessage)
             {
+                pa.StopStream();
                 start = std::chrono::high_resolution_clock::now();
                 // Venter 500ms før vi sender en ack
                 usleep(500000);
@@ -72,8 +71,9 @@ int main(int argc, char **argv)
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
-                // robo.commands(mi.getDriveComm62ands());
+                // robo.commands(mi.getDriveCommands());
             }
+            pa.StopStream();
             pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
             pa.StartStream();
         }
@@ -87,7 +87,11 @@ int main(int argc, char **argv)
         }
 
         std::vector<float> buffer;
+        auto startTimeTest = std::chrono::high_resolution_clock::now();
         pa.ReadStream(buffer, framesPrBuffer);
+        auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
+        auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
+        std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
         result = decoder.FFT(buffer, sampleRate);
 
         if (result != 0 && result != 2277)

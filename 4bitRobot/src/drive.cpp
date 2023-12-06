@@ -41,7 +41,7 @@ void Drive::forwards(std::string binaryNum) {
     //Time the robot should drive for
     int time = (distInMeters/0.2)*1000;
     //Publishing vel = 0.2 m/s
-    _publisher->publish_vel(0.2,0);
+    //_publisher->publish_vel(0.2,0);
 
     //Adding delay according to distance
     std::this_thread::sleep_for(std::chrono::milliseconds(time));
@@ -79,7 +79,7 @@ void Drive::turnleft(std::string binaryNum) {
 
     int time = (degree/90)*1000;
 
-    _publisher->publish_vel(0, 1.57);
+    //_publisher->publish_vel(0, 1.57);
     std::this_thread::sleep_for(std::chrono::milliseconds(time));
     //Set velocity back to 0
      _publisher->publish_vel(0,0);
@@ -92,7 +92,7 @@ void Drive::turnRight(std::string binaryNum) {
     std::cout << "vinkel den drejer " << degree << std::endl;
     int time = (degree/90)*1000;
 
-    _publisher->publish_vel(0,-1.57);
+    //_publisher->publish_vel(0,-1.57);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(time));
     //Set velocity back to 0
