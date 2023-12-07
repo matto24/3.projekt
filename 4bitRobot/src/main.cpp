@@ -20,11 +20,11 @@ const int numChannels = 1;
 
 int main(int argc, char **argv)
 {
-    // rclcpp::init(argc, argv);
-    // auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
-    // rclcpp::executors::SingleThreadedExecutor executor;
-    // executor.add_node(rb3_publisher);
-    // Drive robo(rb3_publisher);
+    rclcpp::init(argc, argv);
+    auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(rb3_publisher);
+    Drive robo(rb3_publisher);
 
     DTMFDecoder decoder(framesPrBuffer);
     MessageInterpreter mi;
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
-                // robo.commands(mi.getDriveCommands());
+                robo.commands(mi.getDriveCommands());
             }
             pa.StopStream();
             pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
@@ -117,7 +117,7 @@ int main(int argc, char **argv)
         }
     }
 
-    // rclcpp::shutdown();
+    rclcpp::shutdown();
     return 0;
 }
 

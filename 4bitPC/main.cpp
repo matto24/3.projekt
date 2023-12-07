@@ -126,14 +126,14 @@ int main(int argc, char const *argv[])
                     shutdown = true;
                     std::cout << "Play Next" << std::endl;
                     m++;
-                    usleep(1400000);
+                    usleep(40000);
                 }
             }
-            if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(3) && !shutdown)
+            if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(2) && !shutdown)
             {
                 std::cout << "Play again" << std::endl;
                 shutdown = true;
-                usleep(1000000);
+                //usleep(500000);
             }
         }
         shutdown = false;
