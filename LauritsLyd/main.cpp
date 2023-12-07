@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
             }
 
             keepPlaying = true;
-            usleep(1000000);
+            usleep(800000);
 
             if (lastKeyCount == 2)
             {

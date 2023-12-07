@@ -1,7 +1,8 @@
 #include "PortAudioClass.h"
 #include <iostream>
 #include <map>
-#include <unistd.h>
+#include <thread>
+#include <chrono>
 
 PortAudioClass::PortAudioClass() : stream(nullptr) {
 }
@@ -32,7 +33,7 @@ void PortAudioClass::OpenOutputStream(int sampleRate, int framesPerBuffer, int n
     outputParameters.device = Pa_GetDefaultOutputDevice();
     outputParameters.channelCount = numChannels;
     outputParameters.sampleFormat = paFloat32;
-    outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultHighOutputLatency;
+    outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = nullptr;
 
     Pa_OpenStream(&stream, nullptr, &outputParameters, sampleRate, framesPerBuffer, paClipOff, nullptr, nullptr);
@@ -172,7 +173,6 @@ void PortAudioClass::PlayTone(char key, double duration, double sleeptime) {
 
     int framesPerBuffer = static_cast<int>(buffer.size());
     Pa_WriteStream(stream, buffer.data(), framesPerBuffer);
-    usleep((duration+sleeptime)*1000);
-    
+    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(duration+sleeptime)));
 }
 

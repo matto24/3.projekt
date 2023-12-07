@@ -39,18 +39,19 @@ int main(int argc, char const *argv[])
 
     for (int m = 0; m < moves.size();)
     {
-        int toneDuration = 60;
+        int toneDuration = 40;
         int waitDuration = 40;
 
         std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
         char lastKey = '\0';
         int lastKeyCount = 0;
-        pa.OpenOutputStream(44100, 4096, 1); // Open for playing
+        pa.OpenOutputStream(44100, 3528, 1); // Open for playing
         pa.StartStream();
 
         for (char key : conversion)
         {
+                auto test = std::chrono::high_resolution_clock::now();
             // std::cout << key << std::endl;
             if (key == lastKey)
             {
@@ -71,11 +72,10 @@ int main(int argc, char const *argv[])
                 lastKeyCount = 1;
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
-                auto test = std::chrono::high_resolution_clock::now();
                 pa.PlayTone(key, toneDuration, waitDuration);
                 //usleep(waitDuration*1000);
-                std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - test).count() << std::endl;
             }
+                std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - test).count() << std::endl;
 
             if (lastKeyCount == 2)
             {

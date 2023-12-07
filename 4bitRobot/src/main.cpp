@@ -87,11 +87,11 @@ int main(int argc, char **argv)
         }
 
         std::vector<float> buffer;
-        auto startTimeTest = std::chrono::high_resolution_clock::now();
+        //auto startTimeTest = std::chrono::high_resolution_clock::now();
         pa.ReadStream(buffer, framesPrBuffer);
-        auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
-        auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
-        std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
+        //auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
+        //auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
+        //std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
         result = decoder.FFT(buffer, sampleRate);
 
         if (result != 0 && result != 2277)
