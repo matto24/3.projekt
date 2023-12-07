@@ -13,9 +13,9 @@
 
 #define OUTPUT_FILE "output.csv"
 
-const int sampleRate = 44100;
+const int sampleRate = 48000;
 const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
-const int framesPrBuffer = 1850;
+const int framesPrBuffer = 950;
 const int numChannels = 1;
 
 int main(int argc, char **argv)

@@ -39,14 +39,15 @@ int main(int argc, char const *argv[])
 
     for (int m = 0; m < moves.size();)
     {
-        int toneDuration = 40;
-        int waitDuration = 40;
+        int toneDuration = 30;
+        int waitDuration = 30;
+        int outputBuffer = 44100*(toneDuration+waitDuration)/1000;
 
         std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
         char lastKey = '\0';
         int lastKeyCount = 0;
-        pa.OpenOutputStream(44100, 3528, 1); // Open for playing
+        pa.OpenOutputStream(44100, outputBuffer, 1); // Open for playing
         pa.StartStream();
 
         for (char key : conversion)
