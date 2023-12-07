@@ -15,7 +15,7 @@
 
 const int sampleRate = 44100;
 const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
-const int framesPrBuffer = 1850;
+const int framesPrBuffer = 925;
 const int numChannels = 1;
 
 int main(int argc, char **argv)

@@ -126,7 +126,7 @@ int main(int argc, char const *argv[])
                     shutdown = true;
                     std::cout << "Play Next" << std::endl;
                     m++;
-                    usleep(40000);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(40));
                 }
             }
             if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(2) && !shutdown)
