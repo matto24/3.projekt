@@ -39,8 +39,8 @@ int main(int argc, char const *argv[])
 
     for (int m = 0; m < moves.size();)
     {
-        int toneDuration = 30;
-        int waitDuration = 30;
+        int toneDuration = 40;
+        int waitDuration = 40;
         int outputBuffer = 44100*(toneDuration+waitDuration)/1000;
 
         std::string conversion = audioPlayer.toneList(moves[m]);

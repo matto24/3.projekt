@@ -13,9 +13,9 @@
 
 #define OUTPUT_FILE "output.csv"
 
-const int sampleRate = 48000;
+const int sampleRate = 44100;
 const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
-const int framesPrBuffer = 950;
+const int framesPrBuffer = 1850;
 const int numChannels = 1;
 
 int main(int argc, char **argv)
@@ -59,11 +59,11 @@ int main(int argc, char **argv)
                 // Venter 500ms før vi sender en ack
                 usleep(500000);
 
-                pa.OpenOutputStream(44100, 4096, 1); // Open for playing
+                pa.OpenOutputStream(44100, 8820, 1); // Open for playing
                 pa.StartStream();
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
-                pa.PlayTone(697, 1209, 1.0);
+                pa.PlayTone(697, 1209, 100, 100);
 
                 pa.StopStream();
             }
@@ -110,17 +110,6 @@ int main(int argc, char **argv)
 
         else if (decoder.getStartBit() && result != 0)
         {
-            // std::ofstream outputFile(OUTPUT_FILE);
-            // for (size_t i = 0; i < buffer.size(); i++)
-            // {
-            //     outputFile << buffer[i];
-            //     if (i < buffer.size() - 1)
-            //     {
-            //         outputFile << ",";
-            //     }
-            // }
-            // outputFile.close();
-
             fundneToner.push_back(result);
             start = std::chrono::high_resolution_clock::now();
 

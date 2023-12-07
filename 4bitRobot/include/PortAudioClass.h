@@ -15,11 +15,11 @@ public:
     void StartStream();
     void StopStream();
     void ReadStream(std::vector<float>& buffer, int framesPerBuffer);
-    void PlayTone(double frequency1, double frenquency2, double duration);
+    void PlayTone(double frequency1, double frenquency2, double duration, double sleeptime);
 
 private:
     PaStream *stream;
-    void GenerateTone(std::vector<float>& buffer, double frequency1, double frequency2, double sampleRate, double duration);
+    void GenerateTone(std::vector<float>& buffer, double frequency1, double frequency2, double sampleRate, double playDuration, double sleepDuration);
     int sampleRate;
     int numChannels;
 };

@@ -1,5 +1,7 @@
 #include "PortAudioClass.h"
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 PortAudioClass::PortAudioClass() : stream(nullptr) {
 }
@@ -54,21 +56,29 @@ void PortAudioClass::ReadStream(std::vector<float>& buffer, int framesPerBuffer)
     PaError err = Pa_ReadStream(stream, buffer.data(), framesPerBuffer);
 }
 
-void PortAudioClass::GenerateTone(std::vector<float>& buffer, double frequency1, double frequency2, double sampleRate, double duration) {
-    int totalFrames = static_cast<int>(duration * sampleRate);
-    buffer.resize(totalFrames);
+void PortAudioClass::GenerateTone(std::vector<float>& buffer, double frequency1, double frequency2, double sampleRate, double playDuration, double sleepDuration) {
+    int totalFrames = static_cast<int>((playDuration * sampleRate)/1000);
+    int sleepFrames = static_cast<int>((sleepDuration*sampleRate)/1000);
+    buffer.resize(totalFrames+sleepFrames);
 
     for (int i = 0; i < totalFrames; ++i) {
         double sample = (sin(2 * M_PI * frequency1 * i / sampleRate) + sin(2 * M_PI * frequency2 * i / sampleRate)) / 2;
         buffer[i] = static_cast<float>(sample);
     }
+
+    for (int i = totalFrames; i < totalFrames+sleepFrames; ++i) {
+        double sample = 0;
+        buffer[i] = static_cast<float>(sample);
+    }
 }
 
-void PortAudioClass::PlayTone(double frequency1, double frequency2, double duration) {
+void PortAudioClass::PlayTone(double frequency1, double frequency2, double duration, double sleeptime) {
     int sampleRate = 44100; // Standard Sample Rate
     std::vector<float> buffer;
-    GenerateTone(buffer, frequency1, frequency2, sampleRate, duration);
+    GenerateTone(buffer, frequency1, frequency2, sampleRate, duration, sleeptime);
 
     int framesPerBuffer = static_cast<int>(buffer.size());
     Pa_WriteStream(stream, buffer.data(), framesPerBuffer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(duration+sleeptime)));
+
 }
