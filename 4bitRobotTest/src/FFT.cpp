@@ -98,6 +98,10 @@ void DTMFDecoder::clearLastSound()
     lastSound = 0;
 }
 
+int DTMFDecoder::getCount(int i){
+    return toneCount[i];
+}
+
 int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
 {
     int N = audioData.size();
@@ -147,6 +151,61 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
     if (largestFreq2 != 0 && largestFreq1 != 0)
     {
         detectedSound = static_cast<int>(largestFreq1 + largestFreq2);
+
+        switch (detectedSound)
+        {
+        case 2277:
+            toneCount[0]++;
+            break;
+        case 1906:
+            toneCount[1]++;
+            break;
+        case 2033:
+            toneCount[2]++;
+            break;
+        case 2174:
+            toneCount[3]++;
+            break;
+        case 1979:
+            toneCount[4]++;
+            break;
+        case 2106:
+            toneCount[5]++;
+            break;
+        case 2247:
+            toneCount[6]++;
+            break;
+        case 2061:
+            toneCount[7]++;
+            break;
+        case 2188:
+            toneCount[8]++;
+            break;
+        case 2329:
+            toneCount[9]++;
+            break;
+        case 2330:
+            toneCount[10]++;
+            break;
+        case 2403:
+            toneCount[11]++;
+            break;
+        case 2485:
+            toneCount[12]++;
+            break;
+        case 2574:
+            toneCount[13]++;
+            break;
+        case 2150:
+            toneCount[14]++;
+            break;
+        case 2418:
+            toneCount[15]++;
+            break;
+        default:
+            break;
+        }
+
 
         if (lastSound == detectedSound)
         {

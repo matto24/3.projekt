@@ -18,6 +18,7 @@ private:
     double calculateMedian(const std::vector<float>& vec);
     std::vector<double> last10Medians;
     bool startBit;
+    std::array<int, 16> toneCount{};
 
 public:
     explicit DTMFDecoder(int N);
@@ -27,4 +28,5 @@ public:
     void setStartBit(bool in);
     bool getStartBit();
     void clearLastSound();
+    int getCount(int i);
 };

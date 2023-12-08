@@ -8,8 +8,8 @@
 #include "MessageInterpret.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
-#include "rb3_cpp_publisher.h"
-#include "drive.h"
+//#include "rb3_cpp_publisher.h"
+//#include "drive.h"
 
 #define OUTPUT_FILE "output.csv"
 
@@ -20,12 +20,12 @@ const int numChannels = 1;
 
 int main(int argc, char **argv)
 {
-    rclcpp::init(argc, argv);
+    /*rclcpp::init(argc, argv);
     auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(rb3_publisher);
     Drive robo(rb3_publisher);
-
+*/
     DTMFDecoder decoder(framesPrBuffer);
     MessageInterpreter mi;
 
@@ -58,24 +58,23 @@ int main(int argc, char **argv)
             std::cout << "Expired Count: " << expiredCount << std::endl;
             std::cout << "Checksum Fail Count: " << checksumFailCount << std::endl;
 
-            std::map<int, char> toneToCharMap = {
-                {2277, '0'}, {1906, '1'}, {2033, '2'}, {2174, '3'}, {1979, '4'}, {2106, '5'}, {2247, '6'}, {2061, '7'}, {2188, '8'}, {2329, '9'}, {2330, 'A'}, {2403, 'B'}, {2485, 'C'}, {2574, 'D'}, {2150, '*'}, {2418, '#'}};
-            std::map<char, int> counts;
-
-            // Count occurrences
-            for (int tone : allTones)
-            {
-                if (toneToCharMap.find(tone) != toneToCharMap.end())
-                {
-                    counts[toneToCharMap[tone]]++;
-                }
-            }
-
-            // Output the counts
-            for (const auto &pair : counts)
-            {
-                std::cout << pair.first << ": " << pair.second << std::endl;
-            }
+            std::cout << " 0: " << decoder.getCount(0) << std::endl;
+            std::cout << " 1: " << decoder.getCount(1) << std::endl;
+            std::cout << " 2: " << decoder.getCount(2) << std::endl;
+            std::cout << " 3: " << decoder.getCount(3) << std::endl;
+            std::cout << " 4: " << decoder.getCount(4) << std::endl;
+            std::cout << " 5: " << decoder.getCount(5) << std::endl;
+            std::cout << " 6: " << decoder.getCount(6) << std::endl;
+            std::cout << " 7: " << decoder.getCount(7) << std::endl;
+            std::cout << " 8: " << decoder.getCount(8) << std::endl;
+            std::cout << " 9: " << decoder.getCount(9) << std::endl;
+            std::cout << " A: " << decoder.getCount(10) << std::endl;
+            std::cout << " B: " << decoder.getCount(11) << std::endl;
+            std::cout << " C: " << decoder.getCount(12) << std::endl;
+            std::cout << " D: " << decoder.getCount(13) << std::endl;
+            std::cout << " *: " << decoder.getCount(14) << std::endl;
+            std::cout << " #: " << decoder.getCount(15) << std::endl;
+            
         }
 
         if (fundneToner.size() > 5)
@@ -110,7 +109,7 @@ int main(int argc, char **argv)
             if (mi.getExecuteRoute())
             {
                 shutdown = true;
-                robo.commands(mi.getDriveCommands());
+                //robo.commands(mi.getDriveCommands());
             }
             pa.StopStream();
             pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
@@ -158,7 +157,7 @@ int main(int argc, char **argv)
         }
     }
 
-    rclcpp::shutdown();
+//    rclcpp::shutdown();
     return 0;
 }
 
