@@ -1,4 +1,4 @@
-
+/*
 #pragma once
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/twist.hpp"
@@ -34,5 +34,5 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;
     geometry_msgs::msg::Twist msg;
 };
-
+*/
 

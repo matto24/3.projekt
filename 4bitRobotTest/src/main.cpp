@@ -20,12 +20,13 @@ const int numChannels = 1;
 
 int main(int argc, char **argv)
 {
-    /*rclcpp::init(argc, argv);
-    auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(rb3_publisher);
-    Drive robo(rb3_publisher);
-*/
+    
+    // rclcpp::init(argc, argv);
+    // auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
+    // rclcpp::executors::SingleThreadedExecutor executor;
+    // executor.add_node(rb3_publisher);
+    // Drive robo(rb3_publisher);
+
     DTMFDecoder decoder(framesPrBuffer);
     MessageInterpreter mi;
 
@@ -51,8 +52,7 @@ int main(int argc, char **argv)
 
     while (!shutdown)
     {
-        if (expiredCount + ackCount + checksumFailCount > 9)
-        {
+        if(expiredCount + ackCount + checksumFailCount > 59){
             shutdown = true;
             std::cout << "ACK Count: " << ackCount << std::endl;
             std::cout << "Expired Count: " << expiredCount << std::endl;
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
         }
     }
 
-//    rclcpp::shutdown();
+   // rclcpp::shutdown();
     return 0;
 }
 

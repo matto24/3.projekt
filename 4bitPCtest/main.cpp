@@ -34,7 +34,7 @@ int main(int argc, char const *argv[])
     RouteUI ui;
     //std::vector<std::string> moves = ui.run();
     std::vector<std::string> moves;
-    for(int i=0; i<50; i++) {
+    for(int i=0; i<10; i++) {
         moves.push_back("0000011101100011100111011010");
         moves.push_back("0000110111110100110010001001");
         moves.push_back("0000100111110110101111110000");
