@@ -20,7 +20,6 @@ const int numChannels = 1;
 
 int main(int argc, char **argv)
 {
-    
     rclcpp::init(argc, argv);
     auto rb3_publisher = std::make_shared<RB3_cpp_publisher>();
     rclcpp::executors::SingleThreadedExecutor executor;
@@ -46,18 +45,38 @@ int main(int argc, char **argv)
     int expiredCount = 0;
     int ackCount = 0;
     int checksumFailCount = 0;
+    std::vector<int> allTones;
 
     auto start = std::chrono::high_resolution_clock::now();
 
     while (!shutdown)
     {
-        if(expiredCount + ackCount + checksumFailCount > 49){
+        if (expiredCount + ackCount + checksumFailCount > 9)
+        {
             shutdown = true;
             std::cout << "ACK Count: " << ackCount << std::endl;
             std::cout << "Expired Count: " << expiredCount << std::endl;
             std::cout << "Checksum Fail Count: " << checksumFailCount << std::endl;
-        }
 
+            std::map<int, char> toneToCharMap = {
+                {2277, '0'}, {1906, '1'}, {2033, '2'}, {2174, '3'}, {1979, '4'}, {2106, '5'}, {2247, '6'}, {2061, '7'}, {2188, '8'}, {2329, '9'}, {2330, 'A'}, {2403, 'B'}, {2485, 'C'}, {2574, 'D'}, {2150, '*'}, {2418, '#'}};
+            std::map<char, int> counts;
+
+            // Count occurrences
+            for (int tone : allTones)
+            {
+                if (toneToCharMap.find(tone) != toneToCharMap.end())
+                {
+                    counts[toneToCharMap[tone]]++;
+                }
+            }
+
+            // Output the counts
+            for (const auto &pair : counts)
+            {
+                std::cout << pair.first << ": " << pair.second << std::endl;
+            }
+        }
 
         if (fundneToner.size() > 5)
         {
@@ -82,7 +101,9 @@ int main(int argc, char **argv)
                 pa.StopStream();
 
                 ackCount++;
-            } else {
+            }
+            else
+            {
                 checksumFailCount++;
             }
 
@@ -106,11 +127,11 @@ int main(int argc, char **argv)
         }
 
         std::vector<float> buffer;
-        //auto startTimeTest = std::chrono::high_resolution_clock::now();
+        // auto startTimeTest = std::chrono::high_resolution_clock::now();
         pa.ReadStream(buffer, framesPrBuffer);
-        //auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
-        //auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
-        //std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
+        // auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
+        // auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
+        // std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
         result = decoder.FFT(buffer, sampleRate);
 
         if (result != 0 && result != 2277)
@@ -130,6 +151,7 @@ int main(int argc, char **argv)
         else if (decoder.getStartBit() && result != 0)
         {
             fundneToner.push_back(result);
+            allTones.push_back(result);
             start = std::chrono::high_resolution_clock::now();
 
             continue;
