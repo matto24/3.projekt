@@ -35,11 +35,18 @@ int main(int argc, char const *argv[])
     //std::vector<std::string> moves = ui.run();
     std::vector<std::string> moves;
     for(int i=0; i<10; i++) {
+        
+        // 7,6,3,9,D,A
         moves.push_back("0000011101100011100111011010");
-        moves.push_back("0000110111110100110010001001");
-        moves.push_back("0000100111110110101111110000");
-        moves.push_back("0000110111110011110010000000");
+        //7, 2, 5, 
+        moves.push_back("0000011100100101100011011100");
+        // 9, 1, 6, 
+        moves.push_back("0000100100010110100010111111");
+        // D, *, 3, C, 8, 0
+        moves.push_back("0000110100111110100110011011");
+        // 7, 9, 4, A, B, 0
         moves.push_back("0000011110010100101010110000");
+        // D, #, 4, C, 8, 9
         moves.push_back("0000110111110100110010001001");
     }
 
@@ -48,6 +55,7 @@ int main(int argc, char const *argv[])
     pa.Initialize();
     PlayAudio audioPlayer;
     int ackCount = 0;
+    std::string allTones;
 
     for (int m = 0; m < moves.size();)
     {
@@ -57,6 +65,7 @@ int main(int argc, char const *argv[])
 
         std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
+        allTones+=conversion;
         char lastKey = '\0';
         int lastKeyCount = 0;
         pa.OpenOutputStream(44100, outputBuffer, 1); // Open for playing
@@ -156,5 +165,14 @@ int main(int argc, char const *argv[])
         pa.StopStream();
     }
     std::cout << "antal ack: " << ackCount << std::endl;
+    //cout how many times each character is used in allTones
+    std::map<char, int> charCount;
+    for (char c : allTones) {
+        charCount[c]++;
+    }
+    for (auto it = charCount.begin(); it != charCount.end(); it++) {
+        std::cout << it->first << ": " << it->second << std::endl;
+    }
+
     return 0;
 }
