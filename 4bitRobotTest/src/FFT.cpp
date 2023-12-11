@@ -19,7 +19,6 @@ DTMFDecoder::~DTMFDecoder()
 {
     fftw_destroy_plan(plan);
 }
-
 void DTMFDecoder::setStartBit(bool in)
 {
     startBit = in;
@@ -38,7 +37,6 @@ void DTMFDecoder::clearLastSound()
 int DTMFDecoder::getCount(int i){
     return toneCount[i];
 }
-
 int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
 {
     int N = audioData.size();
@@ -47,10 +45,8 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
 
     // Execute the FFT plan
     fftw_execute(plan);
-    
-    double threshold = 2;
-    double tolerance = 25;
-
+    threshold = 5;
+    tolerance = 25;
     // double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
     double largestAmp1 = threshold;
     double largestAmp2 = threshold;
@@ -91,8 +87,14 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
     }
     if (largestFreq2 != 0 && largestFreq1 != 0)
     {
-        detectedSound = static_cast<int>(largestFreq1 + largestFreq2);
 
+        std::cout << "largestAmp1: " << largestAmp1 << std::endl;
+        std::cout << "largestAmp2: " << largestAmp2 << std::endl;
+        detectedSound = static_cast<int>(largestFreq1 + largestFreq2);
+        if (lastSound == detectedSound)
+        {
+            return 0;
+        }
         switch (detectedSound)
         {
         case 2277:
@@ -147,11 +149,6 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
             break;
         }
 
-
-        if (lastSound == detectedSound)
-        {
-            return 0;
-        }
         if (detectedSound == 2277 && startBit)
         {
             tempSound = lastSound;
@@ -211,3 +208,14 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
     }
     return 0;
 };
+
+
+double DTMFDecoder::getThreshold()
+{
+    return threshold;
+}
+
+double DTMFDecoder::getTolerance()
+{
+    return tolerance;
+}

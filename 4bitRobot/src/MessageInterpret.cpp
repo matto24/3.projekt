@@ -63,11 +63,15 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
 
     // Data
     std::string data = bits.substr(4, 8);
+    std::cout << "data før: " << data << std::endl;
     if(bits[2] == '0'){
         data.replace(0,4, "0000");
-    } else if(bits[3] == '0'){
+    } 
+    if(bits[3] == '0'){
         data.replace(4,4, "0000");
     }
+    std::cout << "data efter: " << data << std::endl;
+    std::cout << "bits: " << bits << std::endl;
 
     // Checksum
     std::string checksumTarget = bits.substr(13, 3) + bits.substr(17, 3) + bits.substr(21, 3);

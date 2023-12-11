@@ -1,21 +1,21 @@
-#include <stdio.h>
+#include <bits/stdc++.h>
+#include <chrono>
+#include <iostream>
+#include <map>
 #include <math.h>
+#include <mutex>
 #include <pthread.h>
 #include <stdbool.h>
-#include <unistd.h>
-#include <map>
-#include <vector>
-#include <iostream>
-#include <bits/stdc++.h>
+#include <stdio.h>
 #include <thread>
-#include <mutex>
-#include <chrono>
+#include <unistd.h>
+#include <vector>
 
-#include "playAudio.h"
+#include "CommandGenerator.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
 #include "RouteUI.h"
-#include "CommandGenerator.h"
+#include "playAudio.h"
 
 #define SAMPLE_RATE 44100
 
@@ -29,150 +29,143 @@ const int framesPrBuffer = 1600;
 const double recordingDurationSeconds = 0.2;
 const int numChannels = 1;
 
-int main(int argc, char const *argv[])
-{
-    RouteUI ui;
-    //std::vector<std::string> moves = ui.run();
-    std::vector<std::string> moves;
-    for(int i=0; i<10; i++) {
-        
-        // 7,6,3,9,D,A
-        moves.push_back("0000011101100011100111011010");
-        //7, 2, 5, 
-        moves.push_back("0000011100100101100011011100");
-        // 9, 1, 6, 
-        moves.push_back("0000100100010110100010111111");
-        // D, 3, *, C, 8, 0
-        moves.push_back("0000110100111110100110011011");
-        // 7, 9, 4, A, B, 0
-        moves.push_back("0000011110010100101010110000");
-        // D, #, 4, C, 8, 9
-        moves.push_back("0000110111110100110010001001");
-    }
+int main(int argc, char const *argv[]) {
+  RouteUI ui;
+  // std::vector<std::string> moves = ui.run();
+  std::vector<std::string> moves;
+  for (int i = 0; i < 6; i++) {
 
-    
-    PortAudioClass pa;
-    pa.Initialize();
-    PlayAudio audioPlayer;
-    int ackCount = 0;
-    std::string allTones;
+    // 7,6,3,9,D,A
+    moves.push_back("0000011101100011100111011010");
+    // 7, 2, 5,
+    moves.push_back("0000011100100101100011011100");
+    // 9, 1, 6,
+    moves.push_back("0000100100010110100010111111");
+    // D, 3, *, C, 8, 0
+    moves.push_back("0000110100111110100110011011");
+    // 7, 9, 4, A, B, 0
+    moves.push_back("0000011110010100101010110000");
+    // D, #, 4, C, 8, 9
+    moves.push_back("0000110111110100110010001001");
+  }
 
-    for (int m = 0; m < moves.size();)
-    {
-        int toneDuration = 40;
-        int waitDuration = 40;
-        int outputBuffer = 44100*(toneDuration+waitDuration)/1000;
+  PortAudioClass pa;
+  pa.Initialize();
+  PlayAudio audioPlayer;
+  int ackCount = 0;
+  std::string allTones;
+  auto startTimeTest = std::chrono::high_resolution_clock::now();
+  for (int m = 0; m < moves.size();) {
+    int toneDuration = 20;
+    int waitDuration = 20;
+    int outputBuffer = 44100 * (toneDuration + waitDuration) / 1000;
 
-        std::string conversion = audioPlayer.toneList(moves[m]);
-        std::cout << "Der afspilles: " << conversion << std::endl;
-        allTones+=conversion;
-        char lastKey = '\0';
-        int lastKeyCount = 0;
-        pa.OpenOutputStream(44100, outputBuffer, 1); // Open for playing
-        pa.StartStream();
+    std::string conversion = audioPlayer.toneList(moves[m]);
+    std::cout << "Der afspilles: " << conversion << std::endl;
+    std::cout << "Command nr: " << m << std::endl;
+    allTones += conversion;
+    char lastKey = '\0';
+    int lastKeyCount = 0;
+    pa.OpenOutputStream(44100, outputBuffer, 1); // Open for playing
+    pa.StartStream();
 
-        for (char key : conversion)
-        {
-                auto test = std::chrono::high_resolution_clock::now();
-            // std::cout << key << std::endl;
-            if (key == lastKey)
-            {
-                lastKeyCount++;
-                if (lastKeyCount == 2)
-                {
-                    pa.PlayTone('0', toneDuration, waitDuration);
-                }
-                else
-                {
-                    pa.PlayTone(key, toneDuration, waitDuration);   
-                }
-                //usleep(waitDuration*1000);
-            }
-            else
-            {
-                lastKey = key;
-                lastKeyCount = 1;
-
-                // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
-                pa.PlayTone(key, toneDuration, waitDuration);
-                //usleep(waitDuration*1000);
-            }
-                std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - test).count() << std::endl;
-
-            if (lastKeyCount == 2)
-            {
-                lastKey = key;
-            }
+    for (char key : conversion) {
+      auto test = std::chrono::high_resolution_clock::now();
+      // std::cout << key << std::endl;
+      if (key == lastKey) {
+        lastKeyCount++;
+        if (lastKeyCount == 2) {
+          pa.PlayTone('0', toneDuration, waitDuration);
+        } else {
+          pa.PlayTone(key, toneDuration, waitDuration);
         }
+        // usleep(waitDuration*1000);
+      } else {
+        lastKey = key;
+        lastKeyCount = 1;
 
-        pa.StopStream();
+        // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1
+        // second)
+        pa.PlayTone(key, toneDuration, waitDuration);
+        // usleep(waitDuration*1000);
+      }
+      std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(
+                       std::chrono::high_resolution_clock::now() - test)
+                       .count()
+                << std::endl;
 
-        // Venter på at lyd tråden er færdig med at spille
+      if (lastKeyCount == 2) {
+        lastKey = key;
+      }
+    }
 
-        // Optag nu
+    pa.StopStream();
 
-        int result;
-        DTMFDecoder decoder(1600);
+    // Venter på at lyd tråden er færdig med at spille
 
-        const size_t ringBufferSize = sampleRate * recordingDurationSeconds;
-        std::vector<double> ringBuffer(ringBufferSize, 0.0);
-        size_t ringBufferIndex = 0;
-        std::vector<int> fundneToner;
+    // Optag nu
 
-        auto start = std::chrono::high_resolution_clock::now();
-        pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
-        pa.StartStream();
-        std::this_thread::sleep_for(std::chrono::milliseconds(40));
+    int result;
+    DTMFDecoder decoder(1600);
 
-        while (!shutdown)
-        {
+    const size_t ringBufferSize = sampleRate * recordingDurationSeconds;
+    std::vector<double> ringBuffer(ringBufferSize, 0.0);
+    size_t ringBufferIndex = 0;
+    std::vector<int> fundneToner;
 
-            std::vector<float> buffer;
-            pa.ReadStream(buffer, framesPrBuffer);
-            // Copy into ring buffer
-            for (int i = 0; i < framesPrBuffer; ++i)
-            {
-                ringBuffer[ringBufferIndex] = buffer[i];
-                ringBufferIndex = (ringBufferIndex + 1) % ringBufferSize;
-            }
-            // If the ring buffer is filled, process it
-            if (ringBufferIndex == 0)
-            {
-                result = decoder.FFT(ringBuffer, sampleRate);
-                if (result != 0)
-                {
-                    std::cout << "result " << result << std::endl;
-                }
-                // Tone 1
-                if (result == 1907)
-                {
-                    shutdown = true;
-                    std::cout << "Play Next" << std::endl;
-                    m++;
-                    ackCount++;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(40));
-                }
-            }
-            if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(2) && !shutdown)
-            {
-                //std::cout << "Play again" << std::endl;
-                m++;
-                shutdown = true;
-                //usleep(500000);
-            }
+    auto start = std::chrono::high_resolution_clock::now();
+    pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
+    pa.StartStream();
+    std::this_thread::sleep_for(std::chrono::milliseconds(40));
+
+    while (!shutdown) {
+
+      std::vector<float> buffer;
+      pa.ReadStream(buffer, framesPrBuffer);
+      // Copy into ring buffer
+      for (int i = 0; i < framesPrBuffer; ++i) {
+        ringBuffer[ringBufferIndex] = buffer[i];
+        ringBufferIndex = (ringBufferIndex + 1) % ringBufferSize;
+      }
+      // If the ring buffer is filled, process it
+      if (ringBufferIndex == 0) {
+        result = decoder.FFT(ringBuffer, sampleRate);
+        if (result != 0) {
+          std::cout << "result " << result << std::endl;
         }
-        shutdown = false;
-        pa.StopStream();
+        // Tone 1
+        if (result == 1907) {
+          shutdown = true;
+          std::cout << "Play Next" << std::endl;
+          m++;
+          ackCount++;
+          std::this_thread::sleep_for(std::chrono::milliseconds(40));
+        }
+      }
+      if (std::chrono::high_resolution_clock::now() - start >
+              std::chrono::milliseconds(500) &&
+          !shutdown) {
+        // std::cout << "Play again" << std::endl;
+        m++;
+        shutdown = true;
+        // usleep(500000);
+      }
     }
-    std::cout << "antal ack: " << ackCount << std::endl;
-    //cout how many times each character is used in allTones
-    std::map<char, int> charCount;
-    for (char c : allTones) {
-        charCount[c]++;
-    }
-    for (auto it = charCount.begin(); it != charCount.end(); it++) {
-        std::cout << it->first << ": " << it->second << std::endl;
-    }
-
-    return 0;
+    shutdown = false;
+    pa.StopStream();
+  }
+  std::cout << "antal ack: " << ackCount << std::endl;
+  // cout how many times each character is used in allTones
+  
+  std::map<char, int> charCount;
+  for (char c : allTones) {
+    charCount[c]++;
+  }
+  for (auto it = charCount.begin(); it != charCount.end(); it++) {
+    std::cout << it->first << ": " << it->second << std::endl;
+  }
+  auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
+  auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
+  std::cout << "Tid om afspilning: " << elapsedTimeTest << std::endl;  
+  return 0;
 }

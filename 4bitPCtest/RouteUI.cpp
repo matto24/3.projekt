@@ -62,8 +62,8 @@
     std::pair<double,double> RouteUI::calc_Ang_Dist(const cv::Point& point1, const cv::Point& point2, double prev) {
         double dis_x = point2.x - point1.x;
         double dis_y = point2.y - point1.y;
-        return {(sqrt(dis_x * dis_x + dis_y * dis_y))/10, atan2(dis_y,dis_x)-prev};
-        //return {(30*sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), atan2(dis_y,dis_x)-prev};
+        // return {(sqrt(dis_x * dis_x + dis_y * dis_y))/10, atan2(dis_y,dis_x)-prev};
+        return {(10*sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), atan2(dis_y,dis_x)-prev};
 
     }
 

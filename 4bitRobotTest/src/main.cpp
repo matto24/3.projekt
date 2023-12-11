@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
     while (!shutdown)
     {
-        if(expiredCount + ackCount + checksumFailCount > 59){
+        if(expiredCount + ackCount + checksumFailCount > 35){
             shutdown = true;
             std::cout << "ACK Count: " << ackCount << std::endl;
             std::cout << "Expired Count: " << expiredCount << std::endl;
@@ -74,7 +74,10 @@ int main(int argc, char **argv)
             std::cout << " D: " << decoder.getCount(13) << std::endl;
             std::cout << " *: " << decoder.getCount(14) << std::endl;
             std::cout << " #: " << decoder.getCount(15) << std::endl;
-            
+            std::cout << "Samplerate: " << sampleRate << std::endl;
+            std::cout << "Buffer size: " << framesPrBuffer << std::endl;
+            std::cout << "Tolerance: " << decoder.getTolerance() << std::endl;
+            std::cout << "threshold: " << decoder.getThreshold() << std::endl;
         }
 
         if (fundneToner.size() > 5)
@@ -89,7 +92,7 @@ int main(int argc, char **argv)
                 pa.StopStream();
                 start = std::chrono::high_resolution_clock::now();
                 // Venter 500ms før vi sender en ack
-                usleep(500000);
+                // usleep(100000);
 
                 pa.OpenOutputStream(44100, 8820, 1); // Open for playing
                 pa.StartStream();
@@ -115,7 +118,7 @@ int main(int argc, char **argv)
             pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
             pa.StartStream();
         }
-        else if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(2) && decoder.getStartBit())
+        else if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(400) && decoder.getStartBit())
         {
             start = std::chrono::high_resolution_clock::now();
             decoder.setStartBit(false);
@@ -126,12 +129,12 @@ int main(int argc, char **argv)
         }
 
         std::vector<float> buffer;
-        // auto startTimeTest = std::chrono::high_resolution_clock::now();
+        //  auto startTimeTest = std::chrono::high_resolution_clock::now();
         pa.ReadStream(buffer, framesPrBuffer);
-        // auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
-        // auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
-        // std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
-        result = decoder.FFT(buffer, sampleRate);
+         /* auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
+         auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
+         std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
+ */        result = decoder.FFT(buffer, sampleRate);
 
         if (result != 0 && result != 2277)
         {

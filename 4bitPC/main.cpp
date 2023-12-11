@@ -39,8 +39,8 @@ int main(int argc, char const *argv[])
 
     for (int m = 0; m < moves.size();)
     {
-        int toneDuration = 40;
-        int waitDuration = 40;
+        int toneDuration = 20;
+        int waitDuration = 20;
         int outputBuffer = 44100*(toneDuration+waitDuration)/1000;
 
         std::string conversion = audioPlayer.toneList(moves[m]);
@@ -129,7 +129,7 @@ int main(int argc, char const *argv[])
                     std::this_thread::sleep_for(std::chrono::milliseconds(40));
                 }
             }
-            if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(2) && !shutdown)
+            if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(500) && !shutdown)
             {
                 std::cout << "Play again" << std::endl;
                 shutdown = true;
