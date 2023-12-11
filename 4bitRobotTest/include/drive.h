@@ -1,3 +1,5 @@
+/*
+
 #pragma once
 #include <iostream>
 #include <string>
@@ -27,5 +29,4 @@ public:
     void turnRight(std::string binaryNum);
 };
 
-
-
+*/
