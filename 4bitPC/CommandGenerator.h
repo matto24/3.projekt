@@ -12,7 +12,7 @@ public:
 
     std::string createCommand(int command, int data) {
         
-        
+
         std::bitset<2> cmdBin(command);
         std::cout << cmdBin.to_string() << std::endl;
         std::string cmdB = cmdBin.to_string();
@@ -37,7 +37,6 @@ public:
             else{
                 L = "10";
             }
-           
         }
         std::cout << "L: " << L << std::endl;
         cmdB += L;

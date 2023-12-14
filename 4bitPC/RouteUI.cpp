@@ -24,8 +24,21 @@
                         std::cout << "Drej til venstre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(2,std::abs(ad.second * (180/M_PI))) << std::endl;
                     }
                     if(std::abs(ad.first) > 0){
-                        out.push_back(cmdG.createCommand(3,std::abs(ad.first)));
-                        std::cout << "Kør frem i: " << std::abs(ad.first) << " decimeter -> " << cmdG.createCommand(3,std::abs(ad.first)) << std::endl;
+                        double distance = abs(ad.first);
+                        while(distance > 0){
+                            if(distance > 255){
+                                out.push_back(cmdG.createCommand(3,std::abs(255)));
+                                distance -= 256;
+                                std::cout << "Kør frem i: " << std::abs(255) << " decimeter -> " << cmdG.createCommand(3,std::abs(256)) << std::endl;
+                            }
+                            else{
+                                out.push_back(cmdG.createCommand(3,std::abs(distance)));
+                                std::cout << "Kør frem i: " << std::abs(distance) << " decimeter -> " << cmdG.createCommand(3,std::abs(distance)) << std::endl;
+                                distance = 0;
+                            }
+                            
+                        }
+                        
                     }
                 }
                 if(out.size() > 0){
@@ -63,7 +76,7 @@
         double dis_x = point2.x - point1.x;
         double dis_y = point2.y - point1.y;
         //return {(sqrt(dis_x * dis_x + dis_y * dis_y))/10, atan2(dis_y,dis_x)-prev};
-        return {(30*sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), atan2(dis_y,dis_x)-prev};
+        return {1000*(sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), atan2(dis_y,dis_x)-prev};
 
     }
 
