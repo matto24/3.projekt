@@ -22,7 +22,6 @@ public:
     Drive(std::shared_ptr<RB3_cpp_publisher> publisher);
     void commands(std::vector<std::pair<int, std::string>> inputCommands);
     void forwards(std::string binaryNum);
-    void backwards(std::string binaryNum);
     void turnleft(std::string binaryNum);
     void turnRight(std::string binaryNum);
 };

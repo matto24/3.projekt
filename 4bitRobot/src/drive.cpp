@@ -19,7 +19,7 @@ void Drive::commands(std::vector<std::pair<int, std::string>> inputCommands) {
         turnleft(inputCommands[i].second);
         break;
     case 0b11: //Command-code
-        backwards(inputCommands[i].second);
+        forwards(inputCommands[i].second);
         break;
     case 0b00:
         break;
@@ -49,27 +49,7 @@ void Drive::forwards(std::string binaryNum) {
    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
-void Drive::backwards(std::string binaryNum) {
-        //Input is the length in m
-    //Converting input to integer
-    double length = stoi(binaryNum.substr(0,binaryNum.size()), nullptr, 2);
-
-    double distInMeters = length/10;
-    std::cout << "fremad i m "<< distInMeters << std::endl;
-
-    //Time the robot should drive for
-     int time = (distInMeters/0.2)*1000;
-
-    //Publishing vel = -0.2 m/s
-    _publisher->publish_vel(-0.2,0);
-
-    //Adding delay according to distance
-    std::this_thread::sleep_for(std::chrono::milliseconds(time));
-    //Set velocity back to 0
-     _publisher->publish_vel(0,0);
-   std::this_thread::sleep_for(std::chrono::milliseconds(500));
-}
-
+       
 //To rotate with a rotational vel of 90deg/s the ang vel command should be set to 1.57
 // x*180/pi = 90, x = 1.57
 void Drive::turnleft(std::string binaryNum) {
