@@ -63,15 +63,12 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
 
     // Data
     std::string data = bits.substr(4, 8);
-    std::cout << "data før: " << data << std::endl;
     if(bits[2] == '0'){
         data.replace(0,4, "0000");
     } 
     if(bits[3] == '0'){
         data.replace(4,4, "0000");
     }
-    std::cout << "data efter: " << data << std::endl;
-    std::cout << "bits: " << bits << std::endl;
 
     // Checksum
     std::string checksumTarget = bits.substr(13, 3) + bits.substr(17, 3) + bits.substr(21, 3);
@@ -95,6 +92,13 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
 
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
+
+
+    // Check if command is the same as the last one
+    if(std::make_pair(commandInt, data) == driveCommands.back()) {
+        return false;
+    }
+
     switch (commandInt) 
     {
     case 0b01: //Command-code

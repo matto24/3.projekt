@@ -62,7 +62,6 @@ int main(int argc, char **argv)
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
                 pa.PlayTone(697, 1209, 100, 100);
-
                 pa.StopStream();
             }
 
