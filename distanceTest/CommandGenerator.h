@@ -16,6 +16,7 @@ public:
         std::cout << cmdBin.to_string() << std::endl;
         std::string cmdB = cmdBin.to_string();
         std::bitset<8> dataBin(data);
+        std::cout << dataBin.to_string() << std::endl;
         std::string dataB = dataBin.to_string();
         std::string L = "11";
 
@@ -24,9 +25,9 @@ public:
         }
 
         if(dataB.substr(0,4) == "0000"){
-           dataB = "1111" + dataB.substr(3,4);
+           dataB = "1111" + dataB.substr(4,4);
            L = "01";
-        }
+    }
 
         if(dataB.substr(4,4) == "0000"){
             dataB = dataB.substr(0,4) + "1111";

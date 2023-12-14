@@ -24,7 +24,7 @@ public:
         }
 
         if(dataB.substr(0,4) == "0000"){
-           dataB = "1111" + dataB.substr(3,4);
+           dataB = "1111" + dataB.substr(4,4);
            L = "01";
         }
 

@@ -33,8 +33,16 @@ int main(int argc, char const *argv[]) {
   RouteUI ui;
   // std::vector<std::string> moves = ui.run();
   std::vector<std::string> moves;
+  CommandGenerator test;
     // Kør en meter
-    moves.push_back("0000110111111010110010001111");
+    int command;
+    int inputDistance;
+    std::cout << "input command: ";
+    std::cin >> command;
+    std::cout << "input data: ";
+    std::cin >> inputDistance;
+    
+    moves.push_back(test.createCommand(command, inputDistance));
     // Execute
     moves.push_back("0000001100110100100011101111");
 
