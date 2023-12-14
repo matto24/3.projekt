@@ -38,7 +38,7 @@ public:
                 L = "10";
             }
         }
-        std::cout << "L: " << L << std::endl;
+        //std::cout << "L: " << L << std::endl;
         cmdB += L;
 
         
