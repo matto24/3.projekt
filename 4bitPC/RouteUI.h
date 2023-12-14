@@ -7,7 +7,7 @@ class RouteUI {
 public:
     RouteUI() {
         
-        image = cv::imread("test.jpg");
+        image = cv::imread("bp.jpg");
         dims = image.size();
         //image = cv::Mat::ones(800, 800, CV_8U) * 255;
         cv::namedWindow("Route UI");
