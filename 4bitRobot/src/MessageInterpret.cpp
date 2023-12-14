@@ -65,7 +65,8 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     std::string data = bits.substr(4, 8);
     if(bits[2] == '0'){
         data.replace(0,4, "0000");
-    } else if(bits[3] == '0'){
+    } 
+    if(bits[3] == '0'){
         data.replace(4,4, "0000");
     }
 
@@ -91,6 +92,13 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
 
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
+
+
+    // Check if command is the same as the last one
+    if(std::make_pair(commandInt, data) == driveCommands.back()) {
+        return false;
+    }
+
     switch (commandInt) 
     {
     case 0b01: //Command-code

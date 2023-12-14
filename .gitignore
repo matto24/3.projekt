@@ -13,6 +13,7 @@ main
 *.log
 *.marks
 *.txt
+*.json
 *.bin
 CMakeCCompilerId.c
 CMakeCXXCompilerId.cpp
@@ -31,4 +32,9 @@ Makefile
 4bitRobot/CMakeFiles/Progress/4
 4bitRobotTest/.cache/
 4bitRobotTest/compile_commands.json
-
+4bitRobotTest/CMakeFiles/Progress/1
+4bitRobotTest/CMakeFiles/Progress/2
+4bitRobotTest/CMakeFiles/Progress/3
+4bitRobotTest/CMakeFiles/Progress/4
+4bitRobotTest/CMakeFiles/Progress/5
+4bitRobotTest/CMakeFiles/Progress/6

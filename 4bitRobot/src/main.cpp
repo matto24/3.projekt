@@ -56,15 +56,12 @@ int main(int argc, char **argv)
             {
                 pa.StopStream();
                 start = std::chrono::high_resolution_clock::now();
-                // Venter 500ms før vi sender en ack
-                usleep(500000);
 
                 pa.OpenOutputStream(44100, 8820, 1); // Open for playing
                 pa.StartStream();
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
                 pa.PlayTone(697, 1209, 100, 100);
-
                 pa.StopStream();
             }
 
@@ -77,7 +74,7 @@ int main(int argc, char **argv)
             pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
             pa.StartStream();
         }
-        else if (std::chrono::high_resolution_clock::now() - start > std::chrono::seconds(2) && decoder.getStartBit())
+        else if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(400) && decoder.getStartBit())
         {
             start = std::chrono::high_resolution_clock::now();
             decoder.setStartBit(false);

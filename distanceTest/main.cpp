@@ -33,21 +33,18 @@ int main(int argc, char const *argv[]) {
   RouteUI ui;
   // std::vector<std::string> moves = ui.run();
   std::vector<std::string> moves;
-  for (int i = 0; i < 6; i++) {
-
-    // 7,6,3,9,D,A
-    moves.push_back("0000011101100011100111011010");
-    // 7, 2, 5,
-    moves.push_back("0000011100100101100011011100");
-    // 9, 1, 6,
-    moves.push_back("0000100100010110100010111111");
-    // D, 3, *, C, 8, 0
-    moves.push_back("0000110100111110100110011011");
-    // 7, 9, 4, A, B, 0
-    moves.push_back("0000011110010100101010110000");
-    // D, #, 4, C, 8, 9
-    moves.push_back("0000110111110100110010001001");
-  }
+  CommandGenerator test;
+    // Kør en meter
+    int command;
+    int inputDistance;
+    std::cout << "input command: ";
+    std::cin >> command;
+    std::cout << "input data: ";
+    std::cin >> inputDistance;
+    
+    moves.push_back(test.createCommand(command, inputDistance));
+    // Execute
+    moves.push_back("0000001100110100100011101111");
 
   PortAudioClass pa;
   pa.Initialize();
@@ -144,8 +141,7 @@ int main(int argc, char const *argv[]) {
       if (std::chrono::high_resolution_clock::now() - start >
               std::chrono::milliseconds(500) &&
           !shutdown) {
-        // std::cout << "Play again" << std::endl;
-        m++;
+        std::cout << "Play again" << std::endl;
         shutdown = true;
         // usleep(500000);
       }

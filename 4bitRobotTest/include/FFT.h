@@ -11,6 +11,8 @@ private:
     const std::array<double, 4> DTMF2;
     int lastSound;
     int N;
+    double threshold;
+    double tolerance;
     int tempSound;
     std::vector<double> in;
     std::vector<fftw_complex> out;
@@ -23,10 +25,11 @@ private:
 public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
-    double calculateAverageOfLast10Medians(const std::vector<float>& audioData);
     int FFT(const std::vector<float>& audioData, double sampleRate);
     void setStartBit(bool in);
     bool getStartBit();
     void clearLastSound();
     int getCount(int i);
+    double getThreshold();
+    double getTolerance();
 };
