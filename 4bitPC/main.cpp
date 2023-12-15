@@ -17,16 +17,13 @@
 #include "RouteUI.h"
 #include "CommandGenerator.h"
 
-#define SAMPLE_RATE 44100
-
 volatile char selectedKey = '\0';
 volatile bool keepPlaying = false;
 
 std::vector<float> recordBuffer;
 bool shutdown = false;
-const int sampleRate = 8000;
-const int framesPrBuffer = 1600;
-const double recordingDurationSeconds = 0.2;
+const int sampleRate = 44100;
+const int framesPrBuffer = 925;
 const int numChannels = 1;
 
 int main(int argc, char const *argv[])
@@ -41,18 +38,17 @@ int main(int argc, char const *argv[])
     {
         int toneDuration = 20;
         int waitDuration = 20;
-        int outputBuffer = 44100*(toneDuration+waitDuration)/1000;
+        int outputBuffer = sampleRate * (toneDuration + waitDuration) / 1000;
 
         std::string conversion = audioPlayer.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
         char lastKey = '\0';
         int lastKeyCount = 0;
-        pa.OpenOutputStream(44100, outputBuffer, 1); // Open for playing
+        pa.OpenOutputStream(sampleRate, outputBuffer, 1); // Open for playing
         pa.StartStream();
 
         for (char key : conversion)
         {
-                //auto test = std::chrono::high_resolution_clock::now();
             // std::cout << key << std::endl;
             if (key == lastKey)
             {
@@ -63,20 +59,16 @@ int main(int argc, char const *argv[])
                 }
                 else
                 {
-                    pa.PlayTone(key, toneDuration, waitDuration);   
+                    pa.PlayTone(key, toneDuration, waitDuration);
                 }
-                //usleep(waitDuration*1000);
             }
             else
             {
                 lastKey = key;
                 lastKeyCount = 1;
 
-                // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
                 pa.PlayTone(key, toneDuration, waitDuration);
-                //usleep(waitDuration*1000);
             }
-                //std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - test).count() << std::endl;
 
             if (lastKeyCount == 2)
             {
@@ -85,18 +77,11 @@ int main(int argc, char const *argv[])
         }
 
         pa.StopStream();
-
         // Venter på at lyd tråden er færdig med at spille
-
         // Optag nu
 
         int result;
-        DTMFDecoder decoder(1600);
-
-        const size_t ringBufferSize = sampleRate * recordingDurationSeconds;
-        std::vector<double> ringBuffer(ringBufferSize, 0.0);
-        size_t ringBufferIndex = 0;
-        std::vector<int> fundneToner;
+        DTMFDecoder decoder(framesPrBuffer);
 
         auto start = std::chrono::high_resolution_clock::now();
         pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
@@ -106,34 +91,23 @@ int main(int argc, char const *argv[])
         {
             std::vector<float> buffer;
             pa.ReadStream(buffer, framesPrBuffer);
-            // Copy into ring buffer
-            for (int i = 0; i < framesPrBuffer; ++i)
+            result = decoder.FFT(buffer, sampleRate);
+            if (result != 0)
             {
-                ringBuffer[ringBufferIndex] = buffer[i];
-                ringBufferIndex = (ringBufferIndex + 1) % ringBufferSize;
+                std::cout << "result: " << result << std::endl;
             }
-            // If the ring buffer is filled, process it
-            if (ringBufferIndex == 0)
+            // Tone 1
+            if (result == 1906)
             {
-                result = decoder.FFT(ringBuffer, sampleRate);
-                if (result != 0)
-                {
-                    std::cout << "result " << result << std::endl;
-                }
-                // Tone 1
-                if (result == 1907)
-                {
-                    shutdown = true;
-                    std::cout << "Play Next" << std::endl;
-                    m++;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(40));
-                }
+                std::cout << "Play Next" << std::endl;
+                m++;
+                shutdown = true;
             }
             if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(500) && !shutdown)
             {
                 std::cout << "Play again" << std::endl;
+                start = std::chrono::high_resolution_clock::now();
                 shutdown = true;
-                //usleep(500000);
             }
         }
         shutdown = false;

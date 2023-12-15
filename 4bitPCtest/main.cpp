@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]) {
   RouteUI ui;
   // std::vector<std::string> moves = ui.run();
   std::vector<std::string> moves;
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 1; i++) {
 
     // 7,6,3,9,D,A
     moves.push_back("0000011101100011100111011010");
@@ -45,14 +45,12 @@ int main(int argc, char const *argv[]) {
     moves.push_back("0000110100111110100110011011");
     // 7, 9, 4, A, B, 0
     moves.push_back("0000011110010100101010110000");
-    // D, #, 4, C, 8, 9
-    moves.push_back("0000110111110100110010001001");
   }
 
   PortAudioClass pa;
   pa.Initialize();
   PlayAudio audioPlayer;
-  int ackCount = 0;
+  int replay = 0;
   std::string allTones;
   auto startTimeTest = std::chrono::high_resolution_clock::now();
   for (int m = 0; m < moves.size();) {
@@ -62,7 +60,6 @@ int main(int argc, char const *argv[]) {
 
     std::string conversion = audioPlayer.toneList(moves[m]);
     std::cout << "Der afspilles: " << conversion << std::endl;
-    std::cout << "Command nr: " << m << std::endl;
     allTones += conversion;
     char lastKey = '\0';
     int lastKeyCount = 0;
@@ -137,25 +134,22 @@ int main(int argc, char const *argv[]) {
           shutdown = true;
           std::cout << "Play Next" << std::endl;
           m++;
-          ackCount++;
-          std::this_thread::sleep_for(std::chrono::milliseconds(40));
         }
       }
       if (std::chrono::high_resolution_clock::now() - start >
               std::chrono::milliseconds(500) &&
           !shutdown) {
-        // std::cout << "Play again" << std::endl;
-        m++;
+        std::cout << "Play again" << std::endl;
         shutdown = true;
-        // usleep(500000);
+        replay++;
       }
     }
     shutdown = false;
     pa.StopStream();
   }
-  std::cout << "antal ack: " << ackCount << std::endl;
+  std::cout << "antal genafspilninger: " << replay << std::endl;
   // cout how many times each character is used in allTones
-  
+
   std::map<char, int> charCount;
   for (char c : allTones) {
     charCount[c]++;
@@ -164,7 +158,9 @@ int main(int argc, char const *argv[]) {
     std::cout << it->first << ": " << it->second << std::endl;
   }
   auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
-  auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(CurrentTimeTest - startTimeTest).count();
-  std::cout << "Tid om afspilning: " << elapsedTimeTest << std::endl;  
+  auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(
+                             CurrentTimeTest - startTimeTest)
+                             .count();
+  std::cout << "Tid om afspilning: " << elapsedTimeTest << std::endl;
   return 0;
 }

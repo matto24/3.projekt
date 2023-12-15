@@ -15,7 +15,6 @@ private:
     std::vector<double> in;
     std::vector<fftw_complex> out;
     fftw_plan plan;
-    std::vector<double> last10Medians;
     bool startBit;
 
 public:

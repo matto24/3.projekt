@@ -17,8 +17,6 @@ private:
     std::vector<double> in;
     std::vector<fftw_complex> out;
     fftw_plan plan;
-    double calculateMedian(const std::vector<float>& vec);
-    std::vector<double> last10Medians;
     bool startBit;
     std::array<int, 16> toneCount{};
 

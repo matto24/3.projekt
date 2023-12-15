@@ -81,7 +81,7 @@
             ang -= 2*M_PI;
         }
         //return {(sqrt(dis_x * dis_x + dis_y * dis_y))/10, atan2(dis_y,dis_x)-prev};
-        return {141.42*(sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), ang};
+        return {1414.2*(sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), ang};
 
     }
 
