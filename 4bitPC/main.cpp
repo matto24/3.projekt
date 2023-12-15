@@ -102,8 +102,9 @@ int main(int argc, char const *argv[])
                 std::cout << "Play Next" << std::endl;
                 m++;
                 shutdown = true;
+                usleep(20000); // wait for ROBO to be ready
             }
-            if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(500) && !shutdown)
+            if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(100) && !shutdown)
             {
                 std::cout << "Play again" << std::endl;
                 start = std::chrono::high_resolution_clock::now();

@@ -50,33 +50,33 @@ int main(int argc, char **argv) {
   auto start = std::chrono::high_resolution_clock::now();
 
   while (!shutdown) {
-     if(ackCount> 9
-     ){ 
-         shutdown = true; 
-         std::cout << "ACK Count: " << ackCount << std::endl; 
-         std::cout << "Expired Count: " << expiredCount << std::endl; 
-         std::cout << "Checksum Fail Count: " << checksumFailCount << std::endl; 
-         std::cout << " 0: " << decoder.getCount(0) << std::endl; 
-         std::cout << " 1: " << decoder.getCount(1) << std::endl; 
-         std::cout << " 2: " << decoder.getCount(2) << std::endl; 
-         std::cout << " 3: " << decoder.getCount(3) << std::endl; 
-         std::cout << " 4: " << decoder.getCount(4) << std::endl; 
-         std::cout << " 5: " << decoder.getCount(5) << std::endl; 
-         std::cout << " 6: " << decoder.getCount(6) << std::endl; 
-         std::cout << " 7: " << decoder.getCount(7) << std::endl; 
-         std::cout << " 8: " << decoder.getCount(8) << std::endl; 
-         std::cout << " 9: " << decoder.getCount(9) << std::endl; 
-         std::cout << " A: " << decoder.getCount(10) << std::endl; 
-         std::cout << " B: " << decoder.getCount(11) << std::endl; 
-         std::cout << " C: " << decoder.getCount(12) << std::endl; 
-         std::cout << " D: " << decoder.getCount(13) << std::endl; 
-         std::cout << " *: " << decoder.getCount(14) << std::endl; 
-         std::cout << " #: " << decoder.getCount(15) << std::endl; 
-         std::cout << "Samplerate: " << sampleRate << std::endl; 
-         std::cout << "Buffer size: " << framesPrBuffer << std::endl; 
-         std::cout << "Tolerance: " << decoder.getTolerance() << std::endl; 
-         std::cout << "threshold: " << decoder.getThreshold() << std::endl; 
-     } 
+    //   if(ackCount> 9
+    // ){ 
+    //     shutdown = true; 
+    //      std::cout << "ACK Count: " << ackCount << std::endl; 
+    //      std::cout << "Expired Count: " << expiredCount << std::endl; 
+    //      std::cout << "Checksum Fail Count: " << checksumFailCount << std::endl; 
+    //      std::cout << " 0: " << decoder.getCount(0) << std::endl; 
+    //      std::cout << " 1: " << decoder.getCount(1) << std::endl; 
+    //      std::cout << " 2: " << decoder.getCount(2) << std::endl; 
+    //      std::cout << " 3: " << decoder.getCount(3) << std::endl; 
+    //      std::cout << " 4: " << decoder.getCount(4) << std::endl; 
+    //      std::cout << " 5: " << decoder.getCount(5) << std::endl; 
+    //      std::cout << " 6: " << decoder.getCount(6) << std::endl; 
+    //      std::cout << " 7: " << decoder.getCount(7) << std::endl; 
+    //      std::cout << " 8: " << decoder.getCount(8) << std::endl; 
+    //      std::cout << " 9: " << decoder.getCount(9) << std::endl; 
+    //      std::cout << " A: " << decoder.getCount(10) << std::endl; 
+    //      std::cout << " B: " << decoder.getCount(11) << std::endl; 
+    //      std::cout << " C: " << decoder.getCount(12) << std::endl; 
+    //      std::cout << " D: " << decoder.getCount(13) << std::endl; 
+    //      std::cout << " *: " << decoder.getCount(14) << std::endl; 
+    //      std::cout << " #: " << decoder.getCount(15) << std::endl; 
+    //      std::cout << "Samplerate: " << sampleRate << std::endl; 
+    //      std::cout << "Buffer size: " << framesPrBuffer << std::endl; 
+    //      std::cout << "Tolerance: " << decoder.getTolerance() << std::endl; 
+    //      std::cout << "threshold: " << decoder.getThreshold() << std::endl; 
+    //   } 
 
     if (fundneToner.size() > 5) {
       decoder.setStartBit(false);
@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
       pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
       pa.StartStream();
     } else if (std::chrono::high_resolution_clock::now() - start >
-                   std::chrono::milliseconds(400) &&
+                   std::chrono::milliseconds(120) &&
                decoder.getStartBit()) {
       start = std::chrono::high_resolution_clock::now();
       decoder.setStartBit(false);
@@ -152,7 +152,9 @@ int main(int argc, char **argv) {
       continue;
     }
   }
-
+  std::cout << "ACK Count: " << ackCount << std::endl; 
+  std::cout << "Expired Count: " << expiredCount << std::endl; 
+  std::cout << "Checksum Fail Count: " << checksumFailCount << std::endl; 
   // rclcpp::shutdown();
   return 0;
 }
