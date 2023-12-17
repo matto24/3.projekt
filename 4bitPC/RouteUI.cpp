@@ -28,8 +28,8 @@
                         while(distance > 0){
                             if(distance > 255){
                                 out.push_back(cmdG.createCommand(3,std::abs(255)));
-                                distance -= 256;
-                                std::cout << "Kør frem i: " << std::abs(255) << " decimeter -> " << cmdG.createCommand(3,std::abs(256)) << std::endl;
+                                distance -= 255;
+                                std::cout << "Kør frem i: " << std::abs(255) << " decimeter -> " << cmdG.createCommand(3,std::abs(255)) << std::endl;
                             }
                             else{
                                 out.push_back(cmdG.createCommand(3,std::abs(distance)));
