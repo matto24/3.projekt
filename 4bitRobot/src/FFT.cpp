@@ -44,7 +44,7 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
 
     // Execute the FFT plan
     fftw_execute(plan);
-    double threshold = 5;
+    double threshold = 2;
     // double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
     double largestAmp1 = threshold;
     double largestAmp2 = threshold;
@@ -98,54 +98,6 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
         }
         lastSound = detectedSound;
         return detectedSound;
-    }
-    return 0;
-
-    // Find the largest frequency in the first DTMF group
-    for (double freq : DTMF1)
-    {
-        int index = static_cast<int>(freq * (N / sampleRate));
-        double amp = std::sqrt(out[index][0] * out[index][0] + out[index][1] * out[index][1]);
-
-        if (amp > largestAmp1)
-        {
-            largestAmp1 = amp;
-            largestFreq1 = freq;
-        }
-    }
-
-    // If a frequency is found in the first group, find one in the second
-    if (largestFreq1 != 0)
-    {
-        for (double freq : DTMF2)
-        {
-            int index = static_cast<int>(freq * (N / sampleRate));
-            double amp = std::sqrt(out[index][0] * out[index][0] + out[index][1] * out[index][1]);
-
-            if (amp > largestAmp2)
-            {
-                largestAmp2 = amp;
-                largestFreq2 = freq;
-            }
-        }
-        // If both frequencies are found, calculate the detected sound
-        if (largestFreq2 != 0)
-        {
-            detectedSound = static_cast<int>(largestFreq1 + largestFreq2);
-
-            if (lastSound == detectedSound)
-            {
-                return 0;
-            }
-            if (detectedSound == 2277 && startBit)
-            {
-                tempSound = lastSound;
-                lastSound = detectedSound;
-                return tempSound;
-            }
-            lastSound = detectedSound;
-            return detectedSound;
-        }
     }
     return 0;
 };

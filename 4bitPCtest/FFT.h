@@ -1,8 +1,8 @@
 #pragma once
-
 #include <vector>
 #include <array>
 #include <fftw3.h>
+#include <algorithm>
 
 class DTMFDecoder {
 private:
@@ -10,14 +10,17 @@ private:
     const std::array<double, 4> DTMF2;
     int lastSound;
     int N;
+    double threshold;
+    double tolerance;
     int tempSound;
     std::vector<double> in;
     std::vector<fftw_complex> out;
     fftw_plan plan;
+    bool startBit;
+    std::array<int, 16> toneCount{};
 
 public:
     explicit DTMFDecoder(int N);
     ~DTMFDecoder();
-
-    int FFT(const std::vector<double>& audioData, double sampleRate);
+    int FFT(const std::vector<float>& audioData, double sampleRate);
 };

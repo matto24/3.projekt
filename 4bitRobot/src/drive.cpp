@@ -35,8 +35,8 @@ void Drive::forwards(std::string binaryNum) {
     double length = stoi(binaryNum.substr(0,binaryNum.size()), nullptr, 2);
 
     //Converting to meters
-    double distInMeters = length/10;
-    std::cout << "fremad i m "<< distInMeters << std::endl;
+    double distInMeters = length/100;
+    std::cout << "fremad i cm "<< length << std::endl;
     //Time the robot should drive for
     int time = (distInMeters/0.2)*1000;
     //Publishing vel = 0.2 m/s
@@ -46,7 +46,7 @@ void Drive::forwards(std::string binaryNum) {
     std::this_thread::sleep_for(std::chrono::milliseconds(time));
     //Set velocity back to 0
      _publisher->publish_vel(0,0);
-   std::this_thread::sleep_for(std::chrono::milliseconds(500));
+   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 
        

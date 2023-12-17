@@ -102,7 +102,7 @@ int main(int argc, char const *argv[])
                 std::cout << "Play Next" << std::endl;
                 m++;
                 shutdown = true;
-                usleep(20000); // wait for ROBO to be ready
+                std::this_thread::sleep_for(std::chrono::milliseconds(20)); // wait for ROBO to be ready
             }
             if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(100) && !shutdown)
             {

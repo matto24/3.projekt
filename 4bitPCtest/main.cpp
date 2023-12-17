@@ -24,8 +24,8 @@ volatile bool keepPlaying = false;
 
 std::vector<float> recordBuffer;
 bool shutdown = false;
-const int sampleRate = 8000;
-const int framesPrBuffer = 1600;
+const int sampleRate = 44100;
+const int framesPrBuffer = 925;
 const double recordingDurationSeconds = 0.2;
 const int numChannels = 1;
 
@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]) {
   RouteUI ui;
   // std::vector<std::string> moves = ui.run();
   std::vector<std::string> moves;
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 6; i++) {
 
     // 7,6,3,9,D,A
     moves.push_back("0000011101100011100111011010");
@@ -45,6 +45,7 @@ int main(int argc, char const *argv[]) {
     moves.push_back("0000110100111110100110011011");
     // 7, 9, 4, A, B, 0
     moves.push_back("0000011110010100101010110000");
+    moves.push_back("0000110100111110100110011011");
   }
 
   PortAudioClass pa;
@@ -54,7 +55,8 @@ int main(int argc, char const *argv[]) {
   std::string allTones;
   auto startTimeTest = std::chrono::high_resolution_clock::now();
   for (int m = 0; m < moves.size();) {
-    int toneDuration = 20;
+    std::cout << "Move: " << m << std::endl;
+    int toneDuration = 15;
     int waitDuration = 20;
     int outputBuffer = 44100 * (toneDuration + waitDuration) / 1000;
 
@@ -103,13 +105,7 @@ int main(int argc, char const *argv[]) {
     // Optag nu
 
     int result;
-    DTMFDecoder decoder(1600);
-
-    const size_t ringBufferSize = sampleRate * recordingDurationSeconds;
-    std::vector<double> ringBuffer(ringBufferSize, 0.0);
-    size_t ringBufferIndex = 0;
-    std::vector<int> fundneToner;
-
+    DTMFDecoder decoder(framesPrBuffer);
     auto start = std::chrono::high_resolution_clock::now();
     pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
     pa.StartStream();
@@ -118,45 +114,32 @@ int main(int argc, char const *argv[]) {
 
       std::vector<float> buffer;
       pa.ReadStream(buffer, framesPrBuffer);
-      // Copy into ring buffer
-      for (int i = 0; i < framesPrBuffer; ++i) {
-        ringBuffer[ringBufferIndex] = buffer[i];
-        ringBufferIndex = (ringBufferIndex + 1) % ringBufferSize;
-      }
+
       // If the ring buffer is filled, process it
-      if (ringBufferIndex == 0) {
-        result = decoder.FFT(ringBuffer, sampleRate);
+        result = decoder.FFT(buffer, sampleRate);
         if (result != 0) {
           std::cout << "result " << result << std::endl;
         }
         // Tone 1
-        if (result == 1907) {
+        if (result == 1906) {
           shutdown = true;
           std::cout << "Play Next" << std::endl;
           m++;
+          std::this_thread::sleep_for(std::chrono::milliseconds(20));
         }
-      }
+      
       if (std::chrono::high_resolution_clock::now() - start >
-              std::chrono::milliseconds(500) &&
+              std::chrono::milliseconds(100) &&
           !shutdown) {
         std::cout << "Play again" << std::endl;
         shutdown = true;
-        replay++;
+        m++;
       }
     }
     shutdown = false;
     pa.StopStream();
   }
-  std::cout << "antal genafspilninger: " << replay << std::endl;
   // cout how many times each character is used in allTones
-
-  std::map<char, int> charCount;
-  for (char c : allTones) {
-    charCount[c]++;
-  }
-  for (auto it = charCount.begin(); it != charCount.end(); it++) {
-    std::cout << it->first << ": " << it->second << std::endl;
-  }
   auto CurrentTimeTest = std::chrono::high_resolution_clock::now();
   auto elapsedTimeTest = std::chrono::duration_cast<std::chrono::milliseconds>(
                              CurrentTimeTest - startTimeTest)

@@ -54,14 +54,17 @@ int main(int argc, char **argv)
 
             if (correctMessage)
             {
+                std::cout << "Message is correct" << std::endl;
                 pa.StopStream();
                 start = std::chrono::high_resolution_clock::now();
-
-                pa.OpenOutputStream(44100, 8820, 1); // Open for playing
+                
+                pa.OpenOutputStream(44100, 1764, 1); // Open for playing
+                std::cout << "åbnet output stream" << std::endl;
                 pa.StartStream();
+                std::cout << "startet stream" << std::endl;
 
                 // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
-                pa.PlayTone(697, 1209, 100, 100);
+                pa.PlayTone(697, 1209, 20, 20);
                 pa.StopStream();
             }
 
@@ -74,7 +77,7 @@ int main(int argc, char **argv)
             pa.OpenInputStream(sampleRate, framesPrBuffer, numChannels);
             pa.StartStream();
         }
-        else if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(400) && decoder.getStartBit())
+        else if (std::chrono::high_resolution_clock::now() - start > std::chrono::milliseconds(60) && decoder.getStartBit())
         {
             start = std::chrono::high_resolution_clock::now();
             decoder.setStartBit(false);
