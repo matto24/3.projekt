@@ -176,3 +176,25 @@ void PortAudioClass::PlayTone(char key, double duration, double sleeptime) {
     std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(duration+sleeptime)));
 }
 
+std::string PortAudioClass::toneList(std::string binaryNum)
+{
+    std::map<std::string, std::string> toneToBitMap = {{"0", "0000"}, {"1", "0001"}, {"2", "0010"}, {"3", "0011"}, {"4", "0100"}, {"5", "0101"}, {"6", "0110"}, {"7", "0111"}, {"8", "1000"}, {"9", "1001"}, {"A", "1010"}, {"B", "1011"}, {"C", "1100"}, {"D", "1101"}, {"*", "1110"}, {"#", "1111"}};
+    std::string output;
+
+    // Iterator
+    std::map<std::string, std::string>::iterator itr;
+    for (int i = 0; i < binaryNum.size() / 4; i++)
+    {
+        std::string firstThree = binaryNum.substr(4 * i, 4);
+        for (itr = toneToBitMap.begin(); itr != toneToBitMap.end(); ++itr)
+        {
+            if (itr->second == firstThree)
+            {
+                output += itr->first;
+                break;
+            }
+        }
+    }
+
+    return output;
+}
