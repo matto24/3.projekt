@@ -62,7 +62,7 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     
 
     // Data
-    std::string data = bits.substr(8, 8);
+    std::string data = bits.substr(4, 8);
     if(bits[2] == '0'){
         data.replace(0,4, "0000");
     } else if(bits[3] == '0'){
@@ -89,8 +89,21 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
 
     lastBits = bits;
 
+    
+    
+    
         //Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
+
+    //Check if command is the same as the last one
+    if(driveCommands.size() > 0){
+        if (std::make_pair(commandInt, data) == driveCommands[-1])
+        {
+            std::cout << "Discarded Duplicate" << std::endl;
+            return false;
+        }
+    }
+
     switch (commandInt) 
     {
     case 0b01: //Command-code

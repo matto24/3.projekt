@@ -101,6 +101,9 @@ int main(int argc, char **argv) {
       }
 
       if (mi.getExecuteRoute()) {
+        // for(std::pair<int,std::string> ins : mi.getDriveCommands()){
+        //   std::cout << ins.first << ", " << std::stoi(ins.second.substr(0,ins.second.size()),nullptr,2) << ", " << ins.second<< std::endl;
+        // }
         shutdown = true;
         // robo.commands(mi.getDriveCommands());
       }
@@ -152,6 +155,7 @@ int main(int argc, char **argv) {
   std::cout << "ACK Count: " << ackCount << std::endl; 
   std::cout << "Expired Count: " << expiredCount << std::endl; 
   std::cout << "Checksum Fail Count: " << checksumFailCount << std::endl; 
+
   // rclcpp::shutdown();
   return 0;
 }

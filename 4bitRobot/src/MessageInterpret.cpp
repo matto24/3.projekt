@@ -107,6 +107,7 @@ bool MessageInterpreter::interpretMessage(const std::vector<int> &inputSekvens)
     if(driveCommands.size() > 0){
         if (std::make_pair(commandInt, data) == driveCommands[-1])
         {
+            std::cout << "Discarded Duplicate" << std::endl;
             return false;
         }
     }
