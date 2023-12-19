@@ -62,7 +62,7 @@ bool MessageInterpreter::interpretMessage(const std::vector<int>& inputSekvens) 
     
 
     // Data
-    std::string data = bits.substr(8, 8);
+    std::string data = bits.substr(4, 8);
     if(bits[2] == '0'){
         data.replace(0,4, "0000");
     } else if(bits[3] == '0'){
