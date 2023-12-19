@@ -103,11 +103,13 @@ bool MessageInterpreter::interpretMessage(const std::vector<int> &inputSekvens)
     // Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
 
-    // Check if command is the same as the last one
-    // if (std::make_pair(commandInt, data) == driveCommands.back())
-    // {
-    //     return false;
-    // }
+    //Check if command is the same as the last one
+    if(driveCommands.size() > 0){
+        if (std::make_pair(commandInt, data) == driveCommands[-1])
+        {
+            return false;
+        }
+    }
 
     switch (commandInt)
     {
