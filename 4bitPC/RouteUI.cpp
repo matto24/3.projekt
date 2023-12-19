@@ -6,11 +6,11 @@
         while (true) {
             cv::imshow("Route UI", image);
             char key = cv::waitKey(10);
-            if(key == 32) {
+            if(key == 32) { // Clearing on spacebar
                 clearScreen();
             }
 
-            if(key==13){
+            if(key==13){ // Enter to send route
                 
                 for(std::pair<double,double> ad : Ang_Dist){
                     
@@ -25,11 +25,22 @@
                     }
                     if(std::abs(ad.first) > 0){
                         double distance = abs(ad.first);
+                        int lastdrive = 0; //to keep it from driving 255 back to back
                         while(distance > 0){
                             if(distance > 255){
-                                out.push_back(cmdG.createCommand(3,std::abs(255)));
-                                distance -= 255;
-                                std::cout << "Kør frem i: " << std::abs(255) << " decimeter -> " << cmdG.createCommand(3,std::abs(255)) << std::endl;
+                                if(lastdrive == 255){
+                                    out.push_back(cmdG.createCommand(3,std::abs(254)));
+                                    distance -= 254;
+                                    lastdrive = 254;
+                                    std::cout << "Kør frem i: " << std::abs(254) << " decimeter -> " << cmdG.createCommand(3,std::abs(254)) << std::endl;
+                                }
+                                else{
+                                    lastdrive = 255;
+                                    out.push_back(cmdG.createCommand(3,std::abs(255)));
+                                    distance -= 255;
+                                    std::cout << "Kør frem i: " << std::abs(255) << " decimeter -> " << cmdG.createCommand(3,std::abs(255)) << std::endl;
+                                }
+                                
                             }
                             else{
                                 out.push_back(cmdG.createCommand(3,std::abs(distance)));
@@ -48,7 +59,7 @@
                     return out;
                 }
             }
-            if (key == 8){
+            if (key == 8){  // For deleting last checkpoint
                 if(circles.size() > 0){
                     circles.pop_back();
                     Ang_Dist.pop_back();
@@ -130,4 +141,5 @@
         image = cv::imread("test.jpg");
         Ang_Dist.clear();
         circles.clear();
+        lastRotation = 0;
     }
