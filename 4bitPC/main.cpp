@@ -11,7 +11,6 @@
 #include <mutex>
 #include <chrono>
 
-#include "playAudio.h"
 #include "FFT.h"
 #include "PortAudioClass.h"
 #include "RouteUI.h"
@@ -32,7 +31,6 @@ int main(int argc, char const *argv[])
     std::vector<std::string> moves = ui.run();
     PortAudioClass pa;
     pa.Initialize();
-    PlayAudio audioPlayer;
 
     for (int m = 0; m < moves.size();)
     {
@@ -40,7 +38,7 @@ int main(int argc, char const *argv[])
         int waitDuration = 20;
         int outputBuffer = sampleRate * (toneDuration + waitDuration) / 1000;
 
-        std::string conversion = audioPlayer.toneList(moves[m]);
+        std::string conversion = pa.toneList(moves[m]);
         std::cout << "Der afspilles: " << conversion << std::endl;
         char lastKey = '\0';
         int lastKeyCount = 0;

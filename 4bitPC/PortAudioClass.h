@@ -3,7 +3,7 @@
 #include <portaudio.h>
 #include <vector>
 #include <cmath>
-
+#include <string>
 class PortAudioClass {
 public:
     PortAudioClass();
@@ -17,6 +17,7 @@ public:
     void ReadStream(std::vector<float>& buffer, int framesPerBuffer);
     void PlayTone(char key, double duration,double sleeptime);
     std::vector<double> keyToFrequencies(char key);
+    std::string toneList(std::string binaryNum);
 
 private:
     PaStream *stream;
