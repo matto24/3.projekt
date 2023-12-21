@@ -7,7 +7,7 @@
 #include <array>
 #include <algorithm>
 
-DTMFDecoder::DTMFDecoder(int N) : DTMF1({697, 770, 852, 941}), // HUSK NU FOR GUDS SKYLD AT ÆNDRE ALLE TAL ALA 697.5
+DTMFDecoder::DTMFDecoder(int N) : DTMF1({697, 770, 852, 941}), 
                                   DTMF2({1209, 1336, 1477, 1633}),
                                   lastSound(0), tempSound(0), in(N), out(N / 2 + 1)
 {
@@ -39,26 +39,25 @@ void DTMFDecoder::clearLastSound()
 int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
 {
     int N = audioData.size();
-    // Copy the audio data to the input buffer
-    std::copy(audioData.begin(), audioData.end(), in.begin()); // Måske lige gyldigt at kopiere til in når det ikk er FFTW Allocate?
+
+    std::copy(audioData.begin(), audioData.end(), in.begin()); 
 
     // Execute the FFT plan
     fftw_execute(plan);
     double threshold = 2;
-    // double threshold = abs(calculateAverageOfLast10Medians(audioData)*100); // LAV NOGET FEDT TIL THRESHOLD
     double largestAmp1 = threshold;
     double largestAmp2 = threshold;
     double largestFreq1 = 0.0;
     double largestFreq2 = 0.0;
     int detectedSound = 0;
 
-    // Function to check if a frequency is within the range of a target frequency
+    // Function to check if a frequency is within tolerance of a target frequency
     auto isFrequencyInRange = [](double target, double actual, double tolerance)
     {
         return std::abs(target - actual) <= tolerance;
     };
 
-    // Adjusted detection logic
+    // Detection
     for (int i = 0; i <= N / 2; ++i)
     {
         double freq = i * sampleRate / N;
@@ -69,7 +68,7 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
             if (isFrequencyInRange(targetFreq, freq, 25.0) && amp > largestAmp1)
             {
                 largestAmp1 = amp;
-                largestFreq1 = targetFreq; // Use the target frequency, not the actual
+                largestFreq1 = targetFreq; 
             }
         }
 
@@ -78,7 +77,7 @@ int DTMFDecoder::FFT(const std::vector<float> &audioData, double sampleRate)
             if (isFrequencyInRange(targetFreq, freq, 25.0) && amp > largestAmp2)
             {
                 largestAmp2 = amp;
-                largestFreq2 = targetFreq; // Use the target frequency, not the actual
+                largestFreq2 = targetFreq; 
             }
         }
     }
