@@ -32,19 +32,19 @@
                                     out.push_back(cmdG.createCommand(3,std::abs(254)));
                                     distance -= 254;
                                     lastdrive = 254;
-                                    std::cout << "Kør frem i: " << std::abs(254) << " decimeter -> " << cmdG.createCommand(3,std::abs(254)) << std::endl;
+                                    std::cout << "Kør frem i: " << std::abs(254) << " centimeter -> " << cmdG.createCommand(3,std::abs(254)) << std::endl;
                                 }
                                 else{
                                     lastdrive = 255;
                                     out.push_back(cmdG.createCommand(3,std::abs(255)));
                                     distance -= 255;
-                                    std::cout << "Kør frem i: " << std::abs(255) << " decimeter -> " << cmdG.createCommand(3,std::abs(255)) << std::endl;
+                                    std::cout << "Kør frem i: " << std::abs(255) << " centimeter -> " << cmdG.createCommand(3,std::abs(255)) << std::endl;
                                 }
                                 
                             }
                             else{
                                 out.push_back(cmdG.createCommand(3,std::abs(distance)));
-                                std::cout << "Kør frem i: " << std::abs(distance) << " decimeter -> " << cmdG.createCommand(3,std::abs(distance)) << std::endl;
+                                std::cout << "Kør frem i: " << std::abs(distance) << " centimeter -> " << cmdG.createCommand(3,std::abs(distance)) << std::endl;
                                 distance = 0;
                             }
                             
@@ -91,7 +91,7 @@
         if(ang > M_PI){
             ang -= 2*M_PI;
         }
-        //return {(sqrt(dis_x * dis_x + dis_y * dis_y))/10, atan2(dis_y,dis_x)-prev};
+        //1414.2 is the user given diagonal
         return {1414.2*(sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), ang};
 
     }
@@ -106,7 +106,6 @@
     }
 
     void RouteUI::updateImage() {
-        //image = cv::Mat::ones(800, 800, CV_8U)*255;
         image = cv::imread("test.jpg");
         double lastRotation = 0;
         for (int i = 0; i < circles.size(); i++) {
@@ -136,8 +135,7 @@
         
     }
 
-    void RouteUI::clearScreen(){
-        //image = cv::Mat::ones(800, 800, CV_8U)*255;
+    void RouteUI::clearScreen(){s
         image = cv::imread("test.jpg");
         Ang_Dist.clear();
         circles.clear();

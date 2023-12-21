@@ -9,7 +9,6 @@ public:
         
         image = cv::imread("test.jpg");
         dims = image.size();
-        //image = cv::Mat::ones(800, 800, CV_8U) * 255;
         cv::namedWindow("Route UI");
         cv::setMouseCallback("Route UI", onMouse, this);
         cmdG = CommandGenerator();
