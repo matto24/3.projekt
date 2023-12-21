@@ -30,17 +30,18 @@ void Drive::commands(std::vector<std::pair<int, std::string>> inputCommands) {
 }
 
 void Drive::forwards(std::string binaryNum) {
-    //Input is the distance in 1/10 m
-    //Converting input to integer
+    //Input is the distance in cm
+    //Converting input to double
     double length = stoi(binaryNum.substr(0,binaryNum.size()), nullptr, 2);
-
+    std::cout << "forwards in cm: "<< length << std::endl;
+  
     //Converting to meters
     double distInMeters = length/100;
-    std::cout << "fremad i cm "<< length << std::endl;
+    
     //Time the robot should drive for
-    int time = (distInMeters/0.2)*1000;
-    //Publishing vel = 0.2 m/s
-    _publisher->publish_vel(0.2,0);
+    int time = (distInMeters/0.1)*1000;
+    //Publishing vel = 0.1 m/s
+    _publisher->publish_vel(0.1,0);
 
     //Adding delay according to distance
     std::this_thread::sleep_for(std::chrono::milliseconds(time));
@@ -54,7 +55,7 @@ void Drive::forwards(std::string binaryNum) {
 // x*180/pi = 90, x = 1.57
 void Drive::turnleft(std::string binaryNum) {
     double degree = stoi(binaryNum.substr(0,binaryNum.size()), nullptr, 2);
-     std::cout << "vinkel den drejer " << degree << std::endl;
+     std::cout << "Angle turned left: " << degree << std::endl;
 
     int time = (degree/90)*1000;
 
@@ -68,7 +69,7 @@ void Drive::turnleft(std::string binaryNum) {
 
 void Drive::turnRight(std::string binaryNum) {
     double degree = stoi(binaryNum.substr(0,binaryNum.size()), nullptr, 2);
-    std::cout << "vinkel den drejer " << degree << std::endl;
+    std::cout << "Angle turned right:  " << degree << std::endl;
     int time = (degree/90)*1000;
 
     _publisher->publish_vel(0,-1.57);
