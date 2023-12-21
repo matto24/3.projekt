@@ -151,7 +151,7 @@ void PortAudioClass::GenerateTone(std::vector<float>& buffer, double frequency1,
     int totalFrames = static_cast<int>((playDuration * sampleRate)/1000);
     int sleepFrames = static_cast<int>((sleepDuration*sampleRate)/1000);
     buffer.resize(totalFrames+sleepFrames);
-    //std::cout << "Buffer str: " << totalFrames+sleepFrames << std::endl;
+
 
     for (int i = 0; i < totalFrames; ++i) {
         double sample = (sin(2 * M_PI * frequency1 * i / sampleRate) + sin(2 * M_PI * frequency2 * i / sampleRate)) / 2;

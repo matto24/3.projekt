@@ -28,18 +28,19 @@ const int numChannels = 1;
 int main(int argc, char const *argv[])
 {
     RouteUI ui;
+    //Running UI and storing the instructions in a vector called moves
     std::vector<std::string> moves = ui.run();
     PortAudioClass pa;
     pa.Initialize();
 
     for (int m = 0; m < moves.size();)
     {
-        int toneDuration = 20;
+        int toneDuration = 9;
         int waitDuration = 20;
         int outputBuffer = sampleRate * (toneDuration + waitDuration) / 1000;
 
         std::string conversion = pa.toneList(moves[m]);
-        std::cout << "Der afspilles: " << conversion << std::endl;
+        std::cout << "Tones played: " << conversion << std::endl;
         char lastKey = '\0';
         int lastKeyCount = 0;
         pa.OpenOutputStream(sampleRate, outputBuffer, 1); // Open for playing
@@ -47,7 +48,6 @@ int main(int argc, char const *argv[])
 
         for (char key : conversion)
         {
-            // std::cout << key << std::endl;
             if (key == lastKey)
             {
                 lastKeyCount++;
@@ -75,8 +75,8 @@ int main(int argc, char const *argv[])
         }
 
         pa.StopStream();
-        // Venter på at lyd tråden er færdig med at spille
-        // Optag nu
+        // Wait for playSound thread is finished playing the instructions
+        //Next part is listening for the acknowledgement
 
         int result;
         DTMFDecoder decoder(framesPrBuffer);

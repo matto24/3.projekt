@@ -73,7 +73,7 @@ void PortAudioClass::GenerateTone(std::vector<float>& buffer, double frequency1,
 }
 
 void PortAudioClass::PlayTone(double frequency1, double frequency2, double duration, double sleeptime) {
-    int sampleRate = 44100; // Standard Sample Rate
+    int sampleRate = 44100; 
     std::vector<float> buffer;
     GenerateTone(buffer, frequency1, frequency2, sampleRate, duration, sleeptime);
 

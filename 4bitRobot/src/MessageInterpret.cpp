@@ -3,7 +3,7 @@
 
 MessageInterpreter::MessageInterpreter()
 {
-    // Initialize the toneToBitMap
+    // Initialiserer toneToBitMap
     executeRoute = false;
     lastBits = "hej";
     toneToBitMap = {
@@ -47,22 +47,6 @@ bool MessageInterpreter::interpretMessage(const std::vector<int> &inputSekvens)
         bits = bits + toneToBitMap[inputSekvens[i]];
     }
     std::cout << bits << std::endl;
-
-    /*//Parity Check:
-    int oneCount = 0;
-    for (char c : bits)
-    {
-        if (c == '1'){
-            oneCount++;
-        }
-    }
-
-    std::cout << oneCount << std::endl;
-    if (bits.substr(bits.length() - 1) == "1" && !oneCount % 2 == 0)
-    {
-        std::cout << "parity fail" << std::endl;
-        //return error?;
-    } */
 
     // Data
     std::string data = bits.substr(4, 8);
