@@ -14,7 +14,6 @@
                 
                 for(std::pair<double,double> ad : Ang_Dist){
                     
-                    //std::cout << i << std::endl;
                     if(ad.second > 0){
                         out.push_back(cmdG.createCommand(1,std::abs(ad.second * (180/M_PI))));
                         std::cout << "Drej til højre med: " << std::abs(ad.second * (180/M_PI)) << " grader -> " << cmdG.createCommand(1,std::abs(ad.second * (180/M_PI))) << std::endl;
