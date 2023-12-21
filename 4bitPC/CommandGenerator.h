@@ -38,7 +38,6 @@ public:
                 L = "10";
             }
         }
-        //std::cout << "L: " << L << std::endl;
         cmdB += L;
 
         
@@ -47,20 +46,9 @@ public:
         std::string checksum = check1.to_string();
 
         checksum = "1" + checksum.substr(0,3) + "1" + checksum.substr(3,3) + "1"+ checksum.substr(6,3);
-
-
       
         std::string commandString = "0000" + cmdB + dataB + checksum;
 
-        // Calculate parity bit (even parity)
-        //char parityBit = (commandString.find('1') % 2 == 0) ? '1' : '0';
-
-        // Add parity bit to the end of the command string
-        //commandString += parityBit;
-
-        // Increment the sequence number for the next command
-       
-        //std::cout << cmdB << " - " <<dataB <<" - " << checksum << std::endl;
         return commandString;
     }
 };
