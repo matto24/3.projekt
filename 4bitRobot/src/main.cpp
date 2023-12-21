@@ -11,10 +11,7 @@
 #include "rb3_cpp_publisher.h"
 #include "drive.h"
 
-#define OUTPUT_FILE "output.csv"
-
-const int sampleRate = 44100;
-const double recordingDurationSeconds = 0.05; // resolution = (sample_rate /(sample_rate*duration))
+const int sampleRate = 44100; // resolution = (sample_rate /(sample_rate*duration))
 const int framesPrBuffer = 925;
 const int numChannels = 1;
 
@@ -63,7 +60,7 @@ int main(int argc, char **argv)
                 pa.StartStream();
                 std::cout << "startet stream" << std::endl;
 
-                // Play the acknowledgment tone (example: 697 Hz and 1209 Hz for 1 second)
+                // Play the acknowledgment
                 pa.PlayTone(697, 1209, 20, 20);
                 pa.StopStream();
             }
