@@ -185,6 +185,7 @@ std::string PortAudioClass::toneList(std::string binaryNum)
     std::map<std::string, std::string>::iterator itr;
     for (int i = 0; i < binaryNum.size() / 4; i++)
     {
+        //Det er faktisk de første 4
         std::string firstThree = binaryNum.substr(4 * i, 4);
         for (itr = toneToBitMap.begin(); itr != toneToBitMap.end(); ++itr)
         {

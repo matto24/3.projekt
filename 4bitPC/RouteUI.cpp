@@ -54,7 +54,7 @@
                 if(out.size() > 0){
                     cv::destroyAllWindows();
                     saveFinalRoute();
-                    out.push_back(cmdG.createCommand(0,0));
+                    out.push_back(cmdG.createCommand(0,0)); //execute
                     return out;
                 }
             }
@@ -75,7 +75,7 @@
         if (event == cv::EVENT_LBUTTONDOWN) {
             
             clickPoint = cv::Point(x, y);
-            circles.emplace_back(clickPoint, 10); 
+            circles.emplace_back(clickPoint, 10); //Gemmer cirkel med radius 10 på det klikkede punkt
             saveSteps();
             updateImage();
         }
@@ -90,8 +90,10 @@
         if(ang > M_PI){
             ang -= 2*M_PI;
         }
-        //1414.2 is the user given diagonal
-        return {1414.2*(sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width)), ang};
+        //1414.2 is the user given diagonal, equal to 10m x 10m. Diagonal in cm ... 1414
+        double dist = 1414.2*(sqrt(dis_x * dis_x + dis_y * dis_y)/sqrt(dims.height*dims.height+dims.width*dims.width));
+
+        return {dist, ang};
 
     }
 
