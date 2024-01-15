@@ -91,6 +91,7 @@ int main(int argc, char **argv)
         //std::cout << "Tid om at fylde bufferen: " << elapsedTimeTest << std::endl;
         result = decoder.FFT(buffer, sampleRate);
 
+        
         if (result != 0 && result != 2277)
         {
             std::cout << result << std::endl;
@@ -105,6 +106,7 @@ int main(int argc, char **argv)
             continue;
         }
 
+        //Save tones
         else if (decoder.getStartBit() && result != 0)
         {
             fundneToner.push_back(result);

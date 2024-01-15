@@ -77,8 +77,10 @@ bool MessageInterpreter::interpretMessage(const std::vector<int> &inputSekvens)
         std::cout << "rigtig checksum" << std::endl;
     }
 
+    //Check if it's the same instruction as the previous one
     if (bits == lastBits)
     {
+        //Return true to send ACK without appending new driveCommand
         return true;
     }
 
@@ -86,15 +88,15 @@ bool MessageInterpreter::interpretMessage(const std::vector<int> &inputSekvens)
 
     // Execute command
     int commandInt = stoi(bits.substr(0, 2), nullptr, 2);
-
+    
     //Check if command is the same as the last one
-    if(driveCommands.size() > 0){
-        if (std::make_pair(commandInt, data) == driveCommands[-1])
-        {
-            std::cout << "Discarded Duplicate" << std::endl;
-            return false;
-        }
-    }
+//    if(driveCommands.size() > 0){
+//        if (std::make_pair(commandInt, data) == driveCommands[-1])
+//        {
+//            std::cout << "Discarded Duplicate" << std::endl;
+//            return false;
+//        }
+//    }
 
     switch (commandInt)
     {

@@ -54,6 +54,7 @@ int main(int argc, char const *argv[])
                 if (lastKeyCount == 2)
                 {
                     pa.PlayTone('0', toneDuration, waitDuration);
+                    lastkeyCount = 0; //Kan løse problemet med ikke at kunne afspille det samme 4 gange
                 }
                 else
                 {
